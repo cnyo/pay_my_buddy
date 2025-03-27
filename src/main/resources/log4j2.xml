@@ -17,6 +17,9 @@
         <File name="MAIN" fileName="C://temps//logs//p6///main.log">
             <PatternLayout disableAnsi="false" pattern="%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n" />
         </File>
+        <File name="payMyBuddy" fileName="C://temps//logs//p6///pay_my_buddy.log">
+            <PatternLayout disableAnsi="false" pattern="%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n" />
+        </File>
     </Appenders>
 
     <Loggers>
@@ -26,8 +29,7 @@
             <AppenderRef ref="MAIN"/>
         </Root>
         <Logger name="com.yoann.pay_my_buddy" level="INFO" additivity="false">
-            <AppenderRef ref="ErrorFileAppender"/>
-            <AppenderRef ref="MAIN"/>
+            <AppenderRef ref="payMyBuddy"/>
         </Logger>
     </Loggers>
 </Configuration>
