@@ -8,7 +8,7 @@
 
 Initialisation des données
 ```
-psql -h localhost -p 5432 -U postgres -f data.sql
+psql -h localhost -p 5432 -U postgres -f ./resources/data.sql
 ```
 
 Vérification de l'initialisation
