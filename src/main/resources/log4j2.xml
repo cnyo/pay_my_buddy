@@ -23,12 +23,12 @@
     </Appenders>
 
     <Loggers>
-        <Root level="WARN">
+        <Root level="INFO">
             <AppenderRef ref="CONSOLE" />
             <AppenderRef ref="ErrorFileAppender"/>
             <AppenderRef ref="MAIN"/>
         </Root>
-        <Logger name="com.yoann.pay_my_buddy" level="INFO" additivity="false">
+        <Logger name="com.yoann.pay_my_buddy" level="INFO" additivity="true">
             <AppenderRef ref="payMyBuddy"/>
         </Logger>
     </Loggers>
