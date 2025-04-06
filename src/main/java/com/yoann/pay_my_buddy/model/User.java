@@ -21,16 +21,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
-    )
-    @JoinTable(
-            name = "connection_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "associated_user_id")
-    )
-    private List<User> associatedUsers = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConnectionUser> connections = new ArrayList<>();
+
+    @OneToMany(mappedBy = "associatedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConnectionUser> associatedConnections = new ArrayList<>();
 
     public User setId(Long id) {
         this.id = id;
@@ -72,19 +67,41 @@ public class User {
         return this;
     }
 
-    public List<User> getAssociatedUsers() {
-        return associatedUsers;
+    public List<ConnectionUser> getConnections() {
+        return connections;
     }
 
-    public User addUser(User user) {
-        associatedUsers.add(user);
+    public User addConnectionUser(ConnectionUser connectionUser) {
+        if (connectionUser.getAssociatedUser() != null && connectionUser.getUser() != null) {
+            connections.add(connectionUser);
+        }
 
         return this;
     }
 
-    public User remove(User associatedUser) {
-        associatedUsers.remove(associatedUser);
+    public User addConnectedUser(ConnectionUser connectionUser) {
+        if (connectionUser.getAssociatedUser() != null && connectionUser.getUser() != null) {
+            connections.add(connectionUser);
+        }
 
         return this;
+    }
+
+    public User removeConnectionUser(ConnectionUser connectionUser) {
+        connections.remove(connectionUser);
+
+        return this;
+    }
+
+    public void setConnections(List<ConnectionUser> connections) {
+        this.connections = connections;
+    }
+
+    public List<ConnectionUser> getAssociatedConnections() {
+        return associatedConnections;
+    }
+
+    public void setAssociatedConnections(List<ConnectionUser> associatedConnections) {
+        this.associatedConnections = associatedConnections;
     }
 }

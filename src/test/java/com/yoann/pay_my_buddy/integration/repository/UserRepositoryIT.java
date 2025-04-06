@@ -1,5 +1,7 @@
 package com.yoann.pay_my_buddy.integration.repository;
 
+import com.yoann.pay_my_buddy.model.ConnectionUser;
+import com.yoann.pay_my_buddy.model.ConnectionUserId;
 import com.yoann.pay_my_buddy.repository.UserRepository;
 import com.yoann.pay_my_buddy.model.User;
 import org.junit.jupiter.api.Test;
@@ -7,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -91,41 +96,70 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void givenAssociatedUser_whenSave_thenSuccess() {
+    public void attachNewAssociatedUser_whenSave_thenSuccess() {
+        // Get main user to add association
+        User mainUser = em.find(User.class, 1);
+        Integer initialCountConnectionUsers = mainUser.getConnections().size();
+
         // Given new user to associate
         User newUser = new User();
         newUser
                 .setUsername("associated_test")
                 .setEmail("test@test.com")
                 .setPassword("password");
-        User insertedNewUser = userRepository.save(newUser);
+        User insertedAssociedUser = userRepository.save(newUser);
 
-        // Get main user to add associated user
-        User mainUser = em.find(User.class, 1);
-        mainUser.addUser(insertedNewUser);
+        ConnectionUser connectionUser = new ConnectionUser(mainUser, insertedAssociedUser, new Date());
+        mainUser.addConnectionUser(connectionUser);
 
         User updatedMainUser = userRepository.save(mainUser);
-        Optional<User> optAssociatedUserResult = updatedMainUser.getAssociatedUsers().stream()
-                .filter(u -> u.getUsername().equals("associated_test"))
-                .findFirst();
 
-        assertThat(updatedMainUser.getId()).isEqualTo(1);
-        assertThat(updatedMainUser.getAssociatedUsers().size()).isEqualTo(2);
-        assertThat(optAssociatedUserResult.isPresent()).isTrue();
-        assertThat(optAssociatedUserResult.get().getUsername()).isEqualTo("associated_test");
+        Optional<ConnectionUser> optResult = mainUser.getConnections().stream().filter(
+                cu -> cu.getUser().getId().equals(1L) && cu.getAssociatedUser().equals(insertedAssociedUser)
+        ).findFirst();
+
+        assertThat(initialCountConnectionUsers).isEqualTo(1);
+        assertThat(updatedMainUser.getConnections().size()).isEqualTo(2);
+        assertThat(optResult.isPresent()).isTrue();
+        assertThat(optResult.get().getUser()).isEqualTo(updatedMainUser);
+        assertThat(optResult.get().getAssociatedUser()).isEqualTo(insertedAssociedUser);
     }
 
     @Test
-    public void removeAssociatedUser_whenSave_thenSuccess() {
+    public void givenNewConnectionUser_whenAlreadyExists_thenFail() {
+        // Get main user to add association
+        User mainUser = em.find(User.class, 1);
+        User associedUser = em.find(User.class, 2);
+
+        ConnectionUser firstConnectionUser = new ConnectionUser(associedUser, mainUser, new Date());
+        mainUser.addConnectionUser(firstConnectionUser);
+        userRepository.save(mainUser);
+
+        ConnectionUser duplicateConnectionUser = new ConnectionUser(associedUser, mainUser, new Date());
+        mainUser.addConnectionUser(duplicateConnectionUser);
+
+        assertThrows(DuplicateKeyException.class, () -> userRepository.save(mainUser));
+    }
+
+    @Test
+    public void givenAssociatedUser_whenRemove_thenSuccess() {
         User mainUser = em.find(User.class, 1);
         User associatedUser = em.find(User.class, 2);
+        ConnectionUser connectionUser = em.find(ConnectionUser.class, new ConnectionUserId(mainUser.getId(), associatedUser.getId()));
 
-        mainUser.remove(associatedUser);
+        mainUser.removeConnectionUser(connectionUser);
         User updatedMainUser = userRepository.save(mainUser);
 
-        assertThat(updatedMainUser.getAssociatedUsers().size()).isEqualTo(0);
+        assertThat(updatedMainUser.getConnections().size()).isEqualTo(0);
         assertThat(em.find(User.class, 2)).isNotNull();
         assertThat(em.find(User.class, 2).getId()).isEqualTo(2);
+    }
+
+    @Test
+    public void whenCountConnectionUser_thenReturnSize() {
+        User mainUser = em.find(User.class, 1);
+
+        assertThat(mainUser.getConnections().size()).isEqualTo(1);
     }
 
 }
