@@ -2,6 +2,7 @@ package com.yoann.pay_my_buddy.integration.repository;
 
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.ConnectionUserId;
+import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.repository.UserRepository;
 import com.yoann.pay_my_buddy.model.User;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Date;
@@ -96,6 +98,29 @@ public class UserRepositoryIT {
     }
 
     @Test
+    // Est-ce qu'il faut bien supprimer le user si il est relié par des transactions ?
+    public void givenUser_whenRemove_thenSuccess() {
+        // Get main user to add association
+        User toRemoveUser = em.find(User.class, 1);
+
+        userRepository.delete(toRemoveUser);
+
+        User user = em.find(User.class, 1);
+
+        assertThat(user).isNull();
+    }
+
+    @Test
+    // Est-ce qu'il faut bien supprimer le user si il est relié par des transactions ?
+    public void givenNoteExistsUser_whenRemove_thenSuccess() {
+        // Get main user to add association
+        User toRemoveUser = new User();
+        toRemoveUser.setId(20L).setUsername("username").setEmail("email@mail.com").setPassword("password");
+
+        assertThrows(ChangeSetPersister.NotFoundException.class, () -> userRepository.delete(toRemoveUser));
+    }
+
+    @Test
     public void attachNewAssociatedUser_whenSave_thenSuccess() {
         // Get main user to add association
         User mainUser = em.find(User.class, 1);
@@ -160,6 +185,27 @@ public class UserRepositoryIT {
         User mainUser = em.find(User.class, 1);
 
         assertThat(mainUser.getConnections().size()).isEqualTo(1);
+    }
+
+    @Test
+    public void givenUserWithTransaction_whenSave_thenSuccess() {
+        User senderUser = em.find(User.class, 1);
+        User receiverUser = em.find(User.class, 2);
+        int initialCountSenderTransactions = senderUser.getSenderTransactions().size();
+
+        Transaction newTransaction = new Transaction();
+        newTransaction
+                .setReceiverUser(receiverUser)
+                .setAmount(12500.00)
+                .setDescription("A description test.")
+                .setDate(new Date());
+
+        senderUser.addSenderTransactions(newTransaction);
+
+        User updatedSenderUser = userRepository.save(senderUser);
+
+        assertThat(initialCountSenderTransactions).isEqualTo(1);
+        assertThat(updatedSenderUser.getSenderTransactions().size()).isEqualTo(2);
     }
 
 }

@@ -10,4 +10,6 @@ public interface UserService {
     Optional<User> getUser(int id);
 
     User addUser(User user);
+
+    boolean removeUser(User toDeleteUser);
 }

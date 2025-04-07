@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -16,11 +19,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 public class UserServiceImplTest {
+
+    @Autowired
+    private TestEntityManager em;
 
     @InjectMocks
     private static UserService userService;
@@ -44,7 +51,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void whenGetUser_thenReturnNull() {
+    public void whenGetNoneExistsUser_thenReturnNull() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         Optional<User> result = userService.getUser(1);
@@ -68,10 +75,6 @@ public class UserServiceImplTest {
 
     @Test
     public void whenGetUsers_thenReturnEmptyList() {
-        User user = new User();
-        List<User> users = new ArrayList<>();
-        users.add(user);
-
         when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
         Iterable<User> result = userService.getUsers();
@@ -81,18 +84,13 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void whenAddUser_thenReturnUser() {
-        User user = new User();
-        user.setUsername("username").setEmail("email@mail.com").setPassword("password");
-        User savedUser = new User();
-        savedUser.setId(5L)
-                .setUsername(user.getUsername())
-                .setEmail(user.getEmail())
-                .setPassword(user.getPassword());
+    public void givenNewUser_whenAdd_thenReturnUser() {
+        User newUser = new User();
+        newUser.setId(anyLong()).setUsername("username").setEmail("email@mail.com").setPassword("password");
 
-        when(userRepository.save(user)).thenReturn(savedUser);
+        when(userRepository.save(any())).thenReturn(newUser);
 
-        User result = userService.addUser(user);
+        User result = userService.addUser(newUser);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(User.class);
@@ -100,45 +98,37 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void addUser_whenUserAlreadyExists_thenReturnUser() {
-//        User user = new User();
-//        user.setUsername("username").setEmail("email@mail.com").setPassword("password");
-//
-//        em.persist(user);
-//        // em.flush();
-//
-//        User newUser = new User();
-//        newUser.setId(5L)
-//                .setUsername(user.getUsername())
-//                .setEmail(user.getEmail())
-//                .setPassword(user.getPassword());
-//
-//        when(userRepository.save(user)).thenReturn(newUser);
-//
-//        User result = userService.addUser(user);
-//
-//        assertThat(result).isNotNull();
-        //assertThat(result).isInstanceOf(User.class);
-        //assertThat(result.getUsername()).isEqualTo("username");
-    }
+    public void givenUser_whenUpdate_thenReturnUser() {
+        User updateUser = new User();
+        updateUser.setId(40L).setUsername("username").setEmail("email@mail.com").setPassword("password");
 
-    @Test
-    public void addUser_whenUserWithoutUsername_thenReturnUser() {
+        when(userRepository.save(any())).thenReturn(updateUser);
 
-    }
+        User result = userService.addUser(updateUser);
 
-    @Test
-    public void whenUpdateUser_thenReturnUser() {
-
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(40L);
+        assertThat(result).isInstanceOf(User.class);
+        assertThat(result.getUsername()).isEqualTo("username");
     }
 
     @Test
     public void whenDeleteUser_thenReturnTrue() {
+        User toDeleteUser = new User();
+        toDeleteUser.setId(40L).setUsername("username").setEmail("email@mail.com").setPassword("password");
 
+        boolean result = userService.removeUser(toDeleteUser);
+
+        assertThat(result).isTrue();
     }
 
     @Test
     public void whenDeleteUser_thenReturnFalse() {
+        User toDeleteUser = new User();
+        toDeleteUser.setId(40L).setUsername("username").setEmail("email@mail.com").setPassword("password");
 
+        boolean result = userService.removeUser(toDeleteUser);
+
+        assertThat(result).isTrue();
     }
 }
