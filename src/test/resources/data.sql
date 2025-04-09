@@ -39,8 +39,8 @@ ALTER TABLE IF EXISTS connection_user
 
 INSERT INTO "user"(username, email, password)
 VALUES
-    ('jtest', 'jtest@email.com', 'xxx'),
-    ('janetest', 'janetest@email.com', 'xxx');
+    ('jdoe', 'jdoe@email.com', '$2a$12$Y2j1Yoj8x3Do6.JPXJKd3ucj2Iy4nZzptytPUJEsZSNr6MOGS8AhK'),
+    ('janedoe', 'janedoe@email.com', '$2a$12$yvriMy7O4AvwNuMCTUYJ..aNFo8yWSQqnWeKngjlIuTpbP7CKaLky');
 
 INSERT INTO connection_user (user_id, associated_user_id, date)
 VALUES (1, 2, CURRENT_DATE);

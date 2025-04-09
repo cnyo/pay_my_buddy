@@ -1,5 +1,9 @@
-CREATE DATABASE pay_my_buddy;
-\c pay_my_buddy
+-- CREATE DATABASE pay_my_buddy;
+-- \c pay_my_buddy
+
+DROP TABLE IF EXISTS "transaction";
+DROP TABLE IF EXISTS "connection_user";
+DROP TABLE IF EXISTS "user";
 
 CREATE TABLE IF NOT EXISTS "user" (
     id SERIAL NOT NULL PRIMARY KEY,
@@ -26,8 +30,8 @@ CREATE TABLE IF NOT EXISTS transaction (
 
 INSERT INTO "user" (username, email, password)
 VALUES
-    ('jdoe', 'jdoe@email.com', 'xxx'),
-    ('janedoe', 'janedoe@email.com', 'xxx');
+    ('jdoe', 'jdoe@email.com', '$2a$12$Y2j1Yoj8x3Do6.JPXJKd3ucj2Iy4nZzptytPUJEsZSNr6MOGS8AhK'),
+    ('janedoe', 'janedoe@email.com', '$2a$12$yvriMy7O4AvwNuMCTUYJ..aNFo8yWSQqnWeKngjlIuTpbP7CKaLky');
 
 INSERT INTO connection_user (user_id, associated_user_id, date)
 VALUES (1, 2, CURRENT_DATE);
