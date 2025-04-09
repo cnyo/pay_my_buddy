@@ -103,14 +103,13 @@ public class TransactionRestControllerTest {
         given(userService.getUser(anyLong())).willThrow(new SameUserInTransactionException());
 
         // Act & Assert
-        MvcResult result = mvc.perform(post("/transaction")
+        mvc.perform(post("/transaction")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(transactionDto))
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Sender and reciver user can't be same")))
-                .andReturn();
+                .andExpect(content().string(containsString("Sender and receiver user can't be same")));
     }
 
     @WithMockUser(username = "spring")
@@ -119,14 +118,13 @@ public class TransactionRestControllerTest {
         given(userService.getUser(anyLong())).willThrow(new UserNotFoundException());
 
         // Act & Assert
-        MvcResult result = mvc.perform(post("/transaction")
+        mvc.perform(post("/transaction")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(transactionDto))
                 )
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("User not found")))
-                .andReturn();
+                .andExpect(content().string(containsString("User not found")));
     }
 
     @WithMockUser(username = "spring")
@@ -135,12 +133,11 @@ public class TransactionRestControllerTest {
         given(userService.getUser(anyLong())).willThrow(InternalException.class);
 
         // Act & Assert
-        MvcResult result = mvc.perform(post("/transaction")
+        mvc.perform(post("/transaction")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(transactionDto))
                 )
-                .andExpect(status().isInternalServerError())
-                .andReturn();
+                .andExpect(status().isInternalServerError());
     }
 }

@@ -2,10 +2,7 @@ package com.yoann.pay_my_buddy.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "`user`")
@@ -24,10 +21,10 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConnectionUser> connections = new ArrayList<>();
+    private Set<ConnectionUser> connections = new HashSet<>();
 
     @OneToMany(mappedBy = "associatedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConnectionUser> associatedConnections = new ArrayList<>();
+    private Set<ConnectionUser> associatedConnections = new HashSet<>();
 
     @OneToMany(mappedBy = "senderUser")
     private Set<Transaction> senderTransactions = new HashSet<>();
@@ -75,7 +72,7 @@ public class User {
         return this;
     }
 
-    public List<ConnectionUser> getConnections() {
+    public Set<ConnectionUser> getConnections() {
         return connections;
     }
 
@@ -101,15 +98,15 @@ public class User {
         return this;
     }
 
-    public void setConnections(List<ConnectionUser> connections) {
+    public void setConnections(Set<ConnectionUser> connections) {
         this.connections = connections;
     }
 
-    public List<ConnectionUser> getAssociatedConnections() {
+    public Set<ConnectionUser> getAssociatedConnections() {
         return associatedConnections;
     }
 
-    public void setAssociatedConnections(List<ConnectionUser> associatedConnections) {
+    public void setAssociatedConnections(Set<ConnectionUser> associatedConnections) {
         this.associatedConnections = associatedConnections;
     }
 
@@ -129,7 +126,7 @@ public class User {
         this.receiverTransactions = receiverTransactions;
     }
 
-    // Helper methods
+    // HELPERS
     public User addSenderTransactions(Transaction transaction) {
         this.senderTransactions.add(transaction);
         transaction.setSenderUser(this);

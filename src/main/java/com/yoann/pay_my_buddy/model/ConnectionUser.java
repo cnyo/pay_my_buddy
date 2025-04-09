@@ -4,14 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @IdClass(ConnectionUserId.class)
 public class ConnectionUser {
-
-//    @EmbeddedId
-//    private ConnectionUserId id;
 
     @Id
     @Column(name = "user_id")
@@ -43,28 +39,6 @@ public class ConnectionUser {
         this.associatedUser = associatedUser;
         this.date = date;
     }
-
-//    @Override
-//    public boolean equals(Object o) {
-//        if (o == null) {
-//            return false;
-//        }
-//
-//        if (this == o) {
-//            return true;
-//        }
-//
-//        if (!(o instanceof ConnectionUser other)) {
-//            return false;
-//        }
-//
-//        return this.user.getId().equals(other.getUser().getId()) && this.associatedUser.getId().equals(other.getAssociatedUser().getId());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(user.getId(), associatedUser.getId());
-//    }
 
     public Date getDate() {
         return date;

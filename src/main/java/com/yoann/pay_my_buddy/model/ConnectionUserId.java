@@ -15,9 +15,7 @@ public class ConnectionUserId implements Serializable {
         this.associatedUserId = associatedUserId;
     }
 
-    public ConnectionUserId() {
-
-    }
+    public ConnectionUserId() { }
 
     @Override
     public boolean equals(Object o) {

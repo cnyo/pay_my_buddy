@@ -40,7 +40,7 @@ public class UserRepositoryIT {
 
     @Test
     public void givenId_whenFindById_thenReturnUser() {
-        Optional<User> user = userRepository.findById(1);
+        Optional<User> user = userRepository.findById(1L);
 
         assertThat(user.isPresent()).isTrue();
     }
@@ -61,7 +61,7 @@ public class UserRepositoryIT {
 
     @Test
     public void givenNoneExistingId_whenFindById_thenReturnNull() {
-        Optional<User> user = userRepository.findById(1000);
+        Optional<User> user = userRepository.findById(1000L);
 
         assertThat(user).isEmpty();
     }
@@ -124,6 +124,7 @@ public class UserRepositoryIT {
     public void attachNewAssociatedUser_whenSave_thenSuccess() {
         // Get main user to add association
         User mainUser = em.find(User.class, 1);
+//        User mainUser = userRepository.findById(1);
         Integer initialCountConnectionUsers = mainUser.getConnections().size();
 
         // Given new user to associate
