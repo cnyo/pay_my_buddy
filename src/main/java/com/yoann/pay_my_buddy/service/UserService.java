@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface UserService {
     Iterable<User> getUsers();
 
-    Optional<User> getUser(int id);
+    User getUser(Long id);
 
     User addUser(User user);
 

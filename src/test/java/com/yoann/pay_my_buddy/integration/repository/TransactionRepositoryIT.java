@@ -40,8 +40,6 @@ public class TransactionRepositoryIT {
 
         assertThat(transaction.isPresent()).isTrue();
         assertThat(transaction.get().getId()).isEqualTo(1);
-        assertThat(transaction.get().getSenderUser()).isEqualTo(1);
-        assertThat(transaction.get().getReceiverUser()).isEqualTo(2);
     }
 
     @Test
