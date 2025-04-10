@@ -7,11 +7,13 @@ import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.TransactionService;
 import com.yoann.pay_my_buddy.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +27,14 @@ public class TransactionRestController {
     @Autowired
     private UserService userService;
 
-    private final Logger log = LoggerFactory.getLogger(TransactionRestController.class);
+    private final Logger log = LogManager.getLogger(TransactionRestController.class);
 
-    @PostMapping("/transaction")
-    public ResponseEntity<?> newTransaction(@RequestBody TransactionDto transactionDto) {
+    @PostMapping("/transaction/user/{id}")
+    public ResponseEntity<?> newTransaction(@RequestBody TransactionDto transactionDto, @PathVariable String id) {
         log.info("/transaction New transaction");
 
         try {
-            User connectedUser = userService.getUser(1L);
+            User connectedUser = userService.getUser(Long.valueOf(id));
             User receiverUser = userService.getUser(transactionDto.getSenderUserId());
             Transaction transaction = transactionService.addTransaction(transactionDto, connectedUser, receiverUser);
             log.info("Transaction created");

@@ -84,6 +84,6 @@ public class UserServiceImplTest {
 
     @Test
     public void tryToAddConnection_withUserWithoutId_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionUser(new User(), new User())).isInstanceOf(InvalidTypeIdException.class);
+        assertThatThrownBy(() -> userService.addConnectionUser(new User(), new User())).isInstanceOf(IllegalArgumentException.class);
     }
 }

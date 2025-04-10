@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+<!--    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">-->
+<!--    <link rel="stylesheet" href="/css/output.css">-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</head>
+<body>
+<header>
+    <h1 class="">Pay My Buddy</h1>
+    <nav class="">
+        <ul class="">
+            <li class="mr-6"><a href="./transfer" data-th-href="@{/transfer/user/1}"></a>Transférer</li>
+            <li class="mr-6"><a href="./profil" <!--data-th-href="@{/profil/user/1}"-->>Profil</a></li>
+            <li class="mr-6"><a href="./relation" <!--data-th-href="@{/transfer/user/1}"-->>Ajouter relation</a></li>
+            <li class="mr-6"><a href="./logout" data-th-href="@{/logout}">Se déconnecter</a></li>
+        </ul>
+    </nav>
+</header>
+<form method="post" action="./transfer/user/1" data-th-action="@{/transfer/user/1}">
+    <select name="Sélectionner une relation" id=""></select>
+    <input name="Description" type="text">
+    <input name="Montant" type="number">
+    <button class="bg-blue-500">Payer</button>
+</form>
+
+    <table>
+        <caption>Mes Transactions</caption>
+<!--        <tr data-th-if="${users.spliterator().isEmpty()}">-->
+<!--            <td>Aucune personne en base de données</td>-->
+<!--        </tr>-->
+        <tr data-th-each="u : ${users}">
+            <td data-th-text="${u?.username}"></td>
+            <td data-th-text="${u?.username}"></td>
+            <td data-th-text="${u?.username}"></td>
+        </tr>
+    </table>
+</body>
+</html>
