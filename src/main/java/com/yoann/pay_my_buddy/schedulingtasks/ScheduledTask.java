@@ -3,17 +3,14 @@ package com.yoann.pay_my_buddy.schedulingtasks;
 import com.yoann.pay_my_buddy.service.ScheduledTaskService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ScheduledTask {
 
-//    @Value("${pay_my_buddy.backup.path}")
-//    private String BACKUP_PATH;
-
-    private final String BACKUP_PATH = "../backup/backup.dump";
+    private final String DIRECTORY_BACKUP_PATH = "../backup/dev";
+    private final String BACKUP_PATH = "backup.dump";
 
     private final ScheduledTaskService scheduledTaskService;
 
@@ -23,10 +20,10 @@ public class ScheduledTask {
         this.scheduledTaskService = scheduledTaskService;
     }
 
-    @Scheduled(fixedRate = 5000)
+//    @Scheduled(fixedRate = 5000)
     public boolean backupDataBaseTask() {
         try {
-            scheduledTaskService.backupDataBase(BACKUP_PATH);
+            scheduledTaskService.backupDataBase(DIRECTORY_BACKUP_PATH, BACKUP_PATH);
             log.info("Execute Backup DataBase Task successfully");
 
             return true;
