@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="m-5">
+    <h1 class="">Pay My Buddy</h1>
+    <nav class="navbar navbar-expand-lg">
+        <ul class="navbar-nav">
+            <li class="nav-item mr-6"><a class="nav-link" href="./transfer" data-th-href="@{/transaction}">Transférer</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./profil"> <!--data-th-href="@{/profil/user/1}"-->Profil</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./relation" data-th-href="@{/relation}">Ajouter relation</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./logout" data-th-href="@{/logout}">Se déconnecter</a></li>
+        </ul>
+    </nav>
+</header>
+<section class="m-5">
+    <section>
+        <form class="form-floating row g-3 align-items-center" method="post" action="#" data-th-action="@{/relation}" data-th-object="${user}">
+            <div class="mb-3 col-auto">
+                <label for="relation" class="form-label">Chercher une relation</label>
+                <input type="email" class="form-control" id="relation" placeholder="Saisir une adresse email" th:field="*{email}">
+            </div>
+            <button class="btn btn-success col-auto" type="submit">Ajouter</button>
+        </form>
+    </section>
+</section>
+
+</body>
+</html>
