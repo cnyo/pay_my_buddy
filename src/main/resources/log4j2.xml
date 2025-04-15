@@ -28,7 +28,7 @@
             <AppenderRef ref="ErrorFileAppender"/>
             <AppenderRef ref="MAIN"/>
         </Root>
-        <Logger name="com.yoann.pay_my_buddy" level="INFO" additivity="true">
+        <Logger name="com.yoann.pay_my_buddy" level="DEBUG" additivity="true">
             <AppenderRef ref="payMyBuddy"/>
         </Logger>
     </Loggers>

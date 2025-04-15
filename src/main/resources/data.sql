@@ -31,7 +31,10 @@ CREATE TABLE IF NOT EXISTS transaction (
 INSERT INTO "user" (username, email, password)
 VALUES
     ('jdoe', 'jdoe@email.com', '$2a$12$Y2j1Yoj8x3Do6.JPXJKd3ucj2Iy4nZzptytPUJEsZSNr6MOGS8AhK'),
-    ('janedoe', 'janedoe@email.com', '$2a$12$yvriMy7O4AvwNuMCTUYJ..aNFo8yWSQqnWeKngjlIuTpbP7CKaLky');
+    ('janedoe', 'janedoe@email.com', '$2a$12$yvriMy7O4AvwNuMCTUYJ..aNFo8yWSQqnWeKngjlIuTpbP7CKaLky'),
+    ('luc', 'luc@email.com', '$2a$12$kn/jQe4gOLpH1dnZYVgI3.MCS8Oj1LXnbh82jZhO02TE8oqpLZsgu'),
+    ('clara', 'clara@email.com', '$2a$12$jr6VdWeOHCmsv9G4Rt/6O.WpU7.eaDPtQ8eSYVemLwYDjuM6Oaclm'),
+    ('anne', 'anne@email.com', '$2a$12$BDsRp6pzxueCV58eBAQoHOzfNa.O2VV4xOPqpiq56oF8g6hX2AGeq');
 
 INSERT INTO connection_user (user_id, associated_user_id, date)
 VALUES (1, 2, CURRENT_DATE);
