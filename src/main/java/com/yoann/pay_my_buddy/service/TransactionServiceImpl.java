@@ -13,6 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger log = LogManager.getLogger(TransactionServiceImpl.class);
@@ -22,6 +26,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private TransactionMapper transactionMapper;
+
+    @Override
+    public Iterable<Transaction> getTransactions() {
+        log.debug("Call getTransactions");
+        return transactionRepository.findAll();
+    }
 
     @Override
     public Transaction addTransaction(TransactionDto transactionDto,  User senderUser, User receiverUser) throws IllegalArgumentException {
@@ -43,9 +53,24 @@ public class TransactionServiceImpl implements TransactionService {
             throw new BadRequestException("Transaction is null");
         }
 
+        transaction.setDate(new Date());
         Transaction insertedTransaction = transactionRepository.save(transaction);
         log.debug("Adding transaction successfully");
 
         return insertedTransaction;
+    }
+
+    @Override
+    public List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions) {
+        log.debug("Call mapToDtoList");
+        List<TransactionDto> dtoList = new ArrayList<>();
+
+        for (Transaction transaction : transactions) {
+            TransactionDto dto = transactionMapper.toDto(transaction);
+            dtoList.add(dto);
+        }
+        log.debug("Mapped {} transactions to dto", dtoList.size());
+
+        return dtoList;
     }
 }

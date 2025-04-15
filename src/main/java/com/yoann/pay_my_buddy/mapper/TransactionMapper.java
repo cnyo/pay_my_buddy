@@ -32,4 +32,10 @@ public class TransactionMapper {
 
         return transaction;
     }
+
+    public TransactionDto toDto(Transaction transaction) {
+        log.debug("Convert Transaction to TransactionDto");
+
+        return new TransactionDto(transaction);
+    }
 }

@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +32,31 @@ public class TransactionServiceTest {
 
     @Mock
     TransactionMapper transactionMapper;
+
+    @Test
+    public void getTransactions_thenReturnNotEmptyIterable() {
+        Transaction transaction1 = new Transaction();
+        Transaction transaction2 = new Transaction();
+        Iterable<Transaction> mockTransactions = List.of(transaction1, transaction2);
+
+        when(transactionRepository.findAll()).thenReturn(mockTransactions);
+
+        Iterable<Transaction> transactions = transactionService.getTransactions();
+
+        assertThat(transactions).isNotEmpty();
+        assertThat(transactions).contains(transaction1, transaction2);
+    }
+
+    @Test
+    public void getTransactions_thenReturnEmptyIterable() {
+        Iterable<Transaction> mockTransactions = new ArrayList<>();
+
+        when(transactionRepository.findAll()).thenReturn(mockTransactions);
+
+        Iterable<Transaction> transactions = transactionService.getTransactions();
+
+        assertThat(transactions).isEmpty();
+    }
 
     @Test
     public void addTransaction_shouldSaveTransaction() {
@@ -75,5 +103,32 @@ public class TransactionServiceTest {
         User senderUser = new User();
 
         assertThatThrownBy(() -> transactionService.addTransaction(dto, senderUser, senderUser)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void mapTransactions_returnListOfTransactionDto() {
+        Transaction transaction1 = new Transaction();
+        Iterable<Transaction> transactions = List.of(transaction1);
+
+        User senderUser = new User();
+        senderUser.setUsername("sender");
+
+        User receiverUser = new User();
+        receiverUser.setUsername("receiverUser");
+
+        TransactionDto dto = new TransactionDto();
+        dto.setReceiverUsername("receiverUser");
+        dto.setAmount(2000.0);
+        dto.setDescription("Description");
+
+        when(transactionMapper.toDto(any())).thenReturn(dto);
+
+        List<TransactionDto> result = transactionService.mapTransactionsToDtoList(transactions);
+
+        verify(transactionMapper, times(1)).toDto(any(Transaction.class));
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.getFirst().getAmount()).isEqualTo(2000.0);
+        assertThat(result.getFirst().getReceiverUsername()).isEqualTo("receiverUser");
+        assertThat(result.getFirst().getDescription()).isEqualTo("Description");
     }
 }

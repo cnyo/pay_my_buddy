@@ -4,49 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
-<!--    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">-->
-<!--    <link rel="stylesheet" href="/css/output.css">-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 </head>
 <body>
-<header>
+<header class="m-5">
     <h1 class="">Pay My Buddy</h1>
-    <nav class="">
-        <ul class="">
-            <li class="mr-6"><a href="./transfer" data-th-href="@{/transfer/user/1}"></a>Transférer</li>
-            <li class="mr-6"><a href="./profil" <!--data-th-href="@{/profil/user/1}"-->>Profil</a></li>
-            <li class="mr-6"><a href="./relation" <!--data-th-href="@{/transfer/user/1}"-->>Ajouter relation</a></li>
-            <li class="mr-6"><a href="./logout" data-th-href="@{/logout}">Se déconnecter</a></li>
+    <nav class="navbar navbar-expand-lg">
+        <ul class="navbar-nav">
+            <li class="nav-item mr-6"><a class="nav-link" href="./transfer" data-th-href="@{/transfer}">Transférer</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./profil"> <!--data-th-href="@{/profil/user/1}"-->Profil</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./relation" data-th-href="@{/relation}">Ajouter relation</a></li>
+            <li class="nav-item mr-6"><a class="nav-link" href="./logout" data-th-href="@{/logout}">Se déconnecter</a></li>
         </ul>
     </nav>
 </header>
-<section>
-    <form method="post" action="#" data-th-action="@{/transfer}" data-th-object="${transaction}">
-        <select name="Sélectionner une relation" id=""></select>
-        <input name="Description" type="text">
-        <input name="Montant" type="number">
-        <button class="bg-blue-500">Payer</button>
-    </form>
+<section class="m-5">
+    <section>
+        <form class="row" method="post" action="#" data-th-action="@{/transaction}" data-th-object="${transaction}">
+            <input hidden="hidden" name="senderUser" th:field="*{senderUser}" value="${user.id}">
+            <select class="form-select col" name="relations" id="relations" th:field="*{receiverUser}">
+                <option selected value="">Sélectionnez une relation</option>
+                <option data-th-each="u : ${relations}" data-th-value="${u?.id}" data-th-text="${u?.getUsername()}"></option>
+            </select>
+            <input class="form-control mx-1 col" name="Description" placeholder="description" aria-label="description" type="text" th:field="*{description}">
+            <div class="input-group col">
+                <input class="form-control mx-1 col" name="Montant" aria-label="montant" type="number" th:field="*{amount}" value="1">
+                <span class="input-group-text" id="basic-addon2">€</span>
+            </div>
+            <button class="btn btn-success col" type="submit">Payer</button>
+        </form>
+    </section>
 </section>
 
-<section>
-    <div class="alert-error" <!--data-th-class="alert-${error}"--> data-th-if="${error}">
-        <p data-th-text="${error}">Erreur</p>
-    </div>
+<section class="m-5">
+<!--    <div class="alert-error"> &lt;!&ndash;data-th-class="alert-${error}"&ndash;&gt; >-->
+<!--        <p data-th-text="${error}">Erreur</p>-->
+<!--    </div>-->
     <div class="alert-success" data-th-if="${success}">
         <p data-th-text="${success}">Succès</p>
     </div>
 
-    <table>
-        <caption>Mes Transactions</caption>
-        <!--        <tr data-th-if="${users.spliterator().isEmpty()}">-->
-        <!--            <td>Aucune personne en base de données</td>-->
-        <!--        </tr>-->
-        <tr data-th-each="u : ${users}">
-            <td data-th-text="${u?.username}"></td>
-            <td data-th-text="${u?.username}"></td>
-            <td data-th-text="${u?.username}"></td>
+    <h2>Mes transaction</h2>
+    <table class="table" data-th-unless="${transactions.isEmpty()}">
+        <thead>
+            <tr>
+                <th scope="col">Relations</th>
+                <th scope="col">Description</th>
+                <th scope="col">Montant</th>
+            </tr>
+        </thead>
+
+        <tr data-th-if="${transactions?.isEmpty()}">
+            <td colspan="3">Aucune transaction en base de données</td>
+        </tr>
+        <tr data-th-each="t : ${transactions}">
+            <td data-th-text="${t?.receiverUsername}"></td>
+            <td data-th-text="${t?.description}"></td>
+            <td data-th-text="${t?.amount}"></td>
         </tr>
     </table>
 </section>

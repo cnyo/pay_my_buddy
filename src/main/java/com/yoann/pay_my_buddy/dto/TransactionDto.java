@@ -7,12 +7,14 @@ public class TransactionDto {
     private double amount;
     private Long senderUserId;
     private Long receiverUserId;
+    private String receiverUsername;
 
     public TransactionDto(Transaction transaction) {
         this.description = transaction.getDescription();
         this.amount = transaction.getAmount();
         this.senderUserId = transaction.getSenderUser().getId();
         this.receiverUserId = transaction.getReceiverUser().getId();
+        this.receiverUsername = transaction.getReceiverUser().getUsername();
     }
 
     public TransactionDto() {
@@ -48,5 +50,13 @@ public class TransactionDto {
 
     public void setReceiverUserId(Long receiverUserId) {
         this.receiverUserId = receiverUserId;
+    }
+
+    public String getReceiverUsername() {
+        return receiverUsername;
+    }
+
+    public void setReceiverUsername(String receiverUsername) {
+        this.receiverUsername = receiverUsername;
     }
 }
