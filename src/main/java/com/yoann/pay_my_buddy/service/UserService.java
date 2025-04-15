@@ -3,7 +3,7 @@ package com.yoann.pay_my_buddy.service;
 import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.yoann.pay_my_buddy.model.User;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface UserService {
     Iterable<User> getUsers();
@@ -16,5 +16,7 @@ public interface UserService {
 
     User updateUser(User user);
 
-    User addConnectionUser(User authUser, User userToConnect) throws InvalidTypeIdException;
+    User addConnectionToUser(User currentUser, User userToConnect) throws InvalidTypeIdException;
+
+    List<User> getConnectedUsersFromUser(User user);
 }

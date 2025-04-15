@@ -12,6 +12,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -54,28 +57,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User addConnectionUser(User currentUser, User userToConnect) throws UserIsNullException, SameUserInConnectionUserException, IllegalArgumentException {
-        log.debug("add ConnectionUser to currentUser");
+    public User addConnectionToUser(User currentUser, User userToConnect) throws NullPointerException, SameUserInConnectionUserException, IllegalArgumentException {
+        log.debug("Adding connection from user {} to user {}", currentUser.getId(), userToConnect.getId());
 
         validateUsers(currentUser, userToConnect);
 
         ConnectionUser connectionUser = connectionUserFactory.createConnectionUser(currentUser, userToConnect);
-        currentUser.addConnectionUser(connectionUser);
+        attachConnectionToUser(currentUser, connectionUser);
 
         return updateUser(currentUser);
     }
 
-    private void validateUsers(User currentUser, User userToConnect) throws UserIsNullException, SameUserInConnectionUserException, IllegalArgumentException {
+    @Override
+    public List<User> getConnectedUsersFromUser(User user) {
+        return user.getConnections().stream().map(ConnectionUser::getAssociatedUser).toList();
+    }
 
-        if (currentUser == null) {
-            log.error("currentUser is null");
-            throw new UserIsNullException();
-        }
+    private void attachConnectionToUser(User currentUser, ConnectionUser connectionUser) {
+        log.debug("Attaching connection to user {}", currentUser.getId());
+        currentUser.addConnectionUser(connectionUser);
+    }
 
-        if (userToConnect == null) {
-            log.error("userToConnect is null");
-            throw new UserIsNullException();
-        }
+    private void validateUsers(User currentUser, User userToConnect) throws NullPointerException, SameUserInConnectionUserException, IllegalArgumentException {
+        Objects.requireNonNull(currentUser, "currentUser must not be null");
+        Objects.requireNonNull(userToConnect, "currentUser must not be null");
 
         if (currentUser.getId() == null || userToConnect.getId() == null) {
             log.error("id of current user or user to connect is null");

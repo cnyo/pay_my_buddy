@@ -53,7 +53,7 @@ public class UserServiceImplTest {
         when(connectionUserFactory.createConnectionUser(authUser, userToConnect)).thenReturn(connectionUser);
         when(userRepository.save(any())).thenReturn(authUser);
 
-        User result = userService.addConnectionUser(authUser, userToConnect);
+        User result = userService.addConnectionToUser(authUser, userToConnect);
 
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(User.class);
@@ -66,12 +66,12 @@ public class UserServiceImplTest {
 
     @Test
     public void tryToAddConnection_whenUserToConnectIsNull_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionUser(new User(), null)).isInstanceOf(UserIsNullException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), null)).isInstanceOf(UserIsNullException.class);
     }
 
     @Test
     public void tryToAddConnection_whenCurrentUserIsNull_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionUser(null, new User())).isInstanceOf(UserIsNullException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(null, new User())).isInstanceOf(UserIsNullException.class);
     }
 
     @Test
@@ -79,11 +79,11 @@ public class UserServiceImplTest {
         User authUser = new User();
         authUser.setId(1L);
 
-        assertThatThrownBy(() -> userService.addConnectionUser(authUser, authUser)).isInstanceOf(SameUserInConnectionUserException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(authUser, authUser)).isInstanceOf(SameUserInConnectionUserException.class);
     }
 
     @Test
     public void tryToAddConnection_withUserWithoutId_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionUser(new User(), new User())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), new User())).isInstanceOf(IllegalArgumentException.class);
     }
 }
