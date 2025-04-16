@@ -1,7 +1,7 @@
 package com.yoann.pay_my_buddy.service;
 
 import com.yoann.pay_my_buddy.exception.SameUserInConnectionUserException;
-import com.yoann.pay_my_buddy.exception.UserIsNullException;
+import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         return user.getConnections().stream().map(ConnectionUser::getAssociatedUser).toList();
     }
 
-    private void attachConnectionToUser(User currentUser, ConnectionUser connectionUser) {
+    public void attachConnectionToUser(User currentUser, ConnectionUser connectionUser) {
         log.debug("Attaching connection to user {}", currentUser.getId());
         currentUser.addConnectionUser(connectionUser);
     }
@@ -91,5 +91,18 @@ public class UserServiceImpl implements UserService {
             log.error("userToConnect is the same as currentUser");
             throw new SameUserInConnectionUserException();
         }
+    }
+
+    @Override
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        log.debug("Getting user by email");
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (user == null) {
+            log.error("user not found");
+            throw new UserNotFoundException();
+        }
+
+        return user;
     }
 }
