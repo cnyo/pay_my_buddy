@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.model;
 
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
@@ -13,16 +14,19 @@ public class Transaction {
     @Column(name = "description")
     private String description;
 
+    @NonNull
     @Column(name = "amount")
     private Double amount;
 
     @Column(name = "date")
     private Date date;
 
+    @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_user_id")
     private User senderUser;
 
+    @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receiver_user_id")
     private User receiverUser;

@@ -3,12 +3,12 @@ package com.yoann.pay_my_buddy.unit.service;
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserInTransactionException;
+import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 import com.yoann.pay_my_buddy.service.TransactionServiceImpl;
-import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,7 +61,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addTransactionTransaction_shouldSaveTransaction() throws BadRequestException {
+    public void addTransactionTransaction_shouldSaveTransaction() throws UserTransactionException {
         User senderUser = new User();
         User receiverUser = new User();
 
@@ -81,7 +81,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addTransactionTransactionToYourself_throwsException() {
+    public void addTransactionTransactionToHimself_throwsException() {
         User user = new User();
 
         Transaction transaction = new Transaction();
@@ -119,7 +119,7 @@ public class TransactionServiceTest {
         transaction.setAmount(2000.00);
         transaction.setSenderUser(senderUser);
 
-        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(UserTransactionException.class);
         verify(transactionRepository, times(0)).save(any(Transaction.class));
     }
 

@@ -15,12 +15,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TransactionControllerTest {
@@ -33,33 +27,71 @@ public class TransactionControllerTest {
         mockMvc.perform(get("/transaction"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("transaction"))
+                .andExpect(view().name("/transaction"))
                 .andExpect(content().string(containsString("janedoe")));
     }
 
     @Test
     @WithMockUser(username = "jdoe")
-    public void givenTransaction_whenPostTransaction_thenOk() throws Exception {
-        Map<String, String> data = new HashMap<>();
-        data.put("senderUser", "");
-        data.put("receiverUser", "2");
-        data.put("description", "Test transaction");
-        data.put("amount", "8888");
+    public void postFormTransaction_thenOk() throws Exception {
+        String text = "receiverUser=2&description=Test transaction&amount=2000";
 
         mockMvc.perform(
                     post("/transaction")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("receiverUser", "2")
-                        .param("description", "Test transaction")
-                        .param("amount", "8888")
+                        .content(text)
                 )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("transaction"))
-                .andExpect(content().string(containsString("janedoe")))
-                .andExpect(content().string(containsString(data.get("description"))))
-                .andExpect(content().string(containsString(data.get("amount"))))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/transaction"))
+                .andExpect(status().isFound())
+                .andExpect(flash().attributeExists("receiver_username"))
+                .andExpect(flash().attribute("receiver_username", "janedoe"))
+                .andExpect(flash().attributeCount(2))
+                .andExpect(flash().attribute("message", "success"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void postFormTransaction_whenAmountIsNegative_thenRedirectedSuccess() throws Exception {
+        String text = "receiverUser=2&description=Test transaction&amount=-2000";
+
+        mockMvc.perform(
+                    post("/transaction")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content(text)
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/transaction"))
+                .andExpect(status().isFound())
+                .andExpect(flash().attributeCount(2))
+                .andExpect(flash().attributeExists("error_message"))
+                .andExpect(flash().attribute("message", "error"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void postFormTransaction_whenReceiverUserIsEmpty_thenRedirectedSuccess() throws Exception {
+        String text = "receiverUser=&description=Test transaction&amount=2000";
+
+        mockMvc.perform(
+                        post("/transaction")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .content(text)
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/transaction"))
+                .andExpect(status().isFound())
+                .andExpect(flash().attributeCount(2))
+                .andExpect(flash().attributeExists("error_message"))
+                .andExpect(flash().attribute("message", "error"))
         ;
     }
 }

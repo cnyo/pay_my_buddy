@@ -3,11 +3,11 @@ package com.yoann.pay_my_buddy.service;
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserInTransactionException;
+import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 
-import org.apache.coyote.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +34,15 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction addTransaction(Transaction transaction) throws NullPointerException, IllegalArgumentException, BadRequestException {
+    public Transaction addTransaction(Transaction transaction) throws UserTransactionException, IllegalArgumentException {
         if (transaction == null) {
             log.error("Transaction is null");
-            throw new BadRequestException("Transaction is null");
+            throw new UserTransactionException("Transaction is null");
         }
 
         if (transaction.getSenderUser() == null || transaction.getReceiverUser() == null) {
             log.error("senderUser or receiverUser is null");
-            throw new NullPointerException("senderUser or receiverUser is null");
+            throw new UserTransactionException("senderUser or receiverUser is null");
         }
 
         if (transaction.getSenderUser().equals(transaction.getReceiverUser())) {

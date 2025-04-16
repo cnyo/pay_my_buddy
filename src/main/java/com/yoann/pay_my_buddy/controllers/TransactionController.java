@@ -1,17 +1,21 @@
 package com.yoann.pay_my_buddy.controllers;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
-import com.yoann.pay_my_buddy.model.ConnectionUser;
+import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.TransactionService;
 import com.yoann.pay_my_buddy.service.UserService;
+import com.yoann.pay_my_buddy.utils.ControllerHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
@@ -26,14 +30,10 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-//    @ExceptionHandler(Exception.class)
-
     @GetMapping("/transaction")
     public String transaction(Model model) {
-//    public String transferUser(Model model, @AuthenticationPrincipal User user) {
         log.info("transaction view");
-//        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-//        Iterable<User> users = userService.getUsers();
+
         Iterable<Transaction> transactions = transactionService.getTransactions();
         Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(transactions);
 
@@ -45,49 +45,37 @@ public class TransactionController {
         model.addAttribute("relations", relations);
         model.addAttribute("transactions", dtoTransactions);
 
-        return "transaction";
+        return "/transaction";
     }
 
     @PostMapping("/transaction")
-    public RedirectView saveTransaction(@ModelAttribute Transaction transaction, Model model) {
-
+    public RedirectView saveTransaction(@Validated Transaction transaction, Errors errors, RedirectAttributes redirectAttributes) {
         log.info("Post /transaction Create new transaction: {}", transaction.getReceiverUser() != null ? transaction.getReceiverUser().getId() : "aucun receiver");
 
-        try {
-            User user = userService.getUser(1L);
-            transaction.setSenderUser(user);
-            log.info("Before save transaction: {}", transaction);
-            log.debug("sender user id is {}", transaction.getSenderUser().getId());
-//            log.debug("receiver user id is {}", transaction.getReceiverUser().getId());
+        if (errors.hasErrors()) {
+            log.error("Post /transaction errors in transaction");
+            return new RedirectView("/transaction");
+        }
 
-            transaction = transactionService.add(transaction);
+        try {
+            // todo : User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User authUser = userService.getUser(1L);
+            transaction.setSenderUser(authUser);
+
+            transaction = transactionService.addTransaction(transaction);
+
+            redirectAttributes.addFlashAttribute("receiver_username", transaction.getReceiverUser().getUsername());
+            redirectAttributes.addFlashAttribute("message", "success");
 
             log.info("Transaction created");
-        } catch(Exception e) {
-            log.error(e.getMessage());
-//            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (UserTransactionException e) {
+            ControllerHelper.handleBusinessError(log, redirectAttributes, e);
+        } catch (Exception e) {
+            log.error("technical error has occurred", e);
+            redirectAttributes.addFlashAttribute("error_message", "A technical error has occurred");
+            redirectAttributes.addFlashAttribute("message", "success");
         }
-        model.addAttribute("transaction", transaction);
 
-        return new RedirectView("transaction", true);
+        return new RedirectView("/transaction", true);
     }
-
-//    @PostMapping("/transaction")
-//    public RedirectView saveTransaction(@ModelAttribute Transaction transaction, Model model) {
-//
-//        log.info("Post /transaction Create new transaction");
-//
-//        try {
-//            Transaction insertedTransaction = transactionService.add(transaction);
-//
-//            model.addAttribute("transaction", insertedTransaction);
-////            Transaction transaction = transactionService.addTransaction(transactionDto, user, receiverUser);
-//            log.info("Transaction created");
-//        } catch(Exception e) {
-//            log.error(e.getMessage());
-////            redirectAttributes.addFlashAttribute("error", e.getMessage());
-//        }
-//
-//        return new RedirectView("transfer", true);
-//    }
 }
