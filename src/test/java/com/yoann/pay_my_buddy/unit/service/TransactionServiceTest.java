@@ -1,12 +1,14 @@
 package com.yoann.pay_my_buddy.unit.service;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
+import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserInTransactionException;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 import com.yoann.pay_my_buddy.service.TransactionServiceImpl;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,20 +61,19 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addTransaction_shouldSaveTransaction() {
-        TransactionDto dto = new TransactionDto();
-        dto.setAmount(2000.0);
-
+    public void addTransactionTransaction_shouldSaveTransaction() throws BadRequestException {
         User senderUser = new User();
         User receiverUser = new User();
 
         Transaction transaction = new Transaction();
-        transaction.setAmount(2000.0);
+        transaction.setId(1L);
+        transaction.setAmount(2000.00);
+        transaction.setSenderUser(senderUser);
+        transaction.setReceiverUser(receiverUser);
 
-        when(transactionMapper.toEntity(any(), any(), any())).thenReturn(transaction);
         when(transactionRepository.save(any())).thenReturn(transaction);
 
-        Transaction result = transactionService.addTransaction(dto, senderUser, receiverUser);
+        Transaction result = transactionService.addTransaction(transaction);
 
         verify(transactionRepository, times(1)).save(any(Transaction.class));
         assertThat(result).isInstanceOf(Transaction.class);
@@ -80,29 +81,46 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void givenSameReceiverAndSenderUser_addTransaction_shouldThrowSameUserInTransactionException() {
-        TransactionDto dto = new TransactionDto();
-        dto.setAmount(2000.0);
-
+    public void addTransactionTransactionToYourself_throwsException() {
         User user = new User();
 
         Transaction transaction = new Transaction();
-        transaction.setAmount(2000.0);
+        transaction.setId(1L);
+        transaction.setAmount(2000.00);
         transaction.setSenderUser(user);
         transaction.setReceiverUser(user);
 
-        when(transactionMapper.toEntity(any(), any(), any())).thenReturn(transaction);
-
-        assertThatThrownBy(() -> transactionService.addTransaction(dto, user, user)).isInstanceOf(SameUserInTransactionException.class);
+        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(SameUserInTransactionException.class);
     }
 
     @Test
-    public void addTransactionToYourself_throwsException() {
-        TransactionDto dto = new TransactionDto();
-        dto.setAmount(2000.0);
+    public void addTransactionTransaction_whenAmountIsNegative_throwsException() {
+        User senderUser = new User();
+        User receiverUser = new User();
+
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
+        transaction.setAmount(-2000.00);
+        transaction.setSenderUser(senderUser);
+        transaction.setReceiverUser(receiverUser);
+
+        when(transactionRepository.save(any())).thenReturn(transaction);
+
+        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(NegativeAmountException.class);
+        verify(transactionRepository, times(0)).save(any(Transaction.class));
+    }
+
+    @Test
+    public void addTransactionTransaction_whenEmptyReceiver_throwsException() {
         User senderUser = new User();
 
-        assertThatThrownBy(() -> transactionService.addTransaction(dto, senderUser, senderUser)).isInstanceOf(IllegalArgumentException.class);
+        Transaction transaction = new Transaction();
+        transaction.setId(1L);
+        transaction.setAmount(2000.00);
+        transaction.setSenderUser(senderUser);
+
+        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(NullPointerException.class);
+        verify(transactionRepository, times(0)).save(any(Transaction.class));
     }
 
     @Test
