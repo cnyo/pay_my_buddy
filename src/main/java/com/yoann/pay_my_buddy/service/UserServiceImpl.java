@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.service;
 
 import com.yoann.pay_my_buddy.exception.*;
+import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
@@ -103,6 +104,18 @@ public class UserServiceImpl implements UserService {
             log.error("user not found");
             throw new UserNotFoundException();
         }
+
+        return user;
+    }
+
+    @Override
+    public User initUserFromRegistrationForm(RegistrationForm form) {
+        log.debug("Init user from registration form");
+
+        User user = new User();
+        user.setUsername(form.getUsername());
+        user.setEmail(form.getEmail());
+        user.setPassword(form.getPassword());
 
         return user;
     }
