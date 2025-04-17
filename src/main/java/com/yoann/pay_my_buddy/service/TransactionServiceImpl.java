@@ -2,7 +2,7 @@ package com.yoann.pay_my_buddy.service;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
-import com.yoann.pay_my_buddy.exception.SameUserInTransactionException;
+import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
@@ -47,7 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (transaction.getSenderUser().equals(transaction.getReceiverUser())) {
             log.error("senderUser and receiverUser are the same");
-            throw new SameUserInTransactionException();
+            throw new SameUserTransactionException();
         }
 
         if (transaction.getAmount() < 0) {

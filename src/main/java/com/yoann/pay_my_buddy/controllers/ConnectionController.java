@@ -1,16 +1,20 @@
 package com.yoann.pay_my_buddy.controllers;
 
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import com.yoann.pay_my_buddy.exception.ConnectionUserException;
+import com.yoann.pay_my_buddy.exception.UserNotFoundException;
+import com.yoann.pay_my_buddy.forms.ConnectionUserForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
+import com.yoann.pay_my_buddy.utils.ValidationUtils;
+import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -29,20 +33,38 @@ public class ConnectionController {
     }
 
     @PostMapping("/relation")
-    public RedirectView addRelation(@RequestBody String email) throws InvalidTypeIdException {
+    public RedirectView addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, RedirectAttributes redirectAttributes) throws ConnectionUserException {
+        log.info("Post /relation Add connection with user by email");
+
+        if (errors.hasErrors()) {
+            log.error("Post /relation {}", errors.getAllErrors());
+            redirectAttributes.addFlashAttribute("error", "Errors in relation");
+            return new RedirectView("/relation");
+        }
+
+        if (!ValidationUtils.emailIsValid(form.getEmail())) {
+            log.error("Post /relation Email is invalid");
+            redirectAttributes.addFlashAttribute("error", "Email is invalid");
+            return new RedirectView("/relation");
+        }
+
         try {
-            log.info("add relation to user email: {}", email);
             User authUser = userService.getUser(1L);
-            User userToConnect = userService.getUser(3L);
-//            User userToConnect = userService.getUserByEmail(user.getEmail());
+            User userToConnect = userService.getUserByEmail(form.getEmail());
             userService.addConnectionToUser(authUser, userToConnect);
-            // todo: setter un message flash
-        } catch (InvalidTypeIdException e) {
+            redirectAttributes.addFlashAttribute("success", "connection added successfully");
+        } catch (UserNotFoundException e) {
             log.error(e.getMessage());
-            // todo: setter un message flash
+            redirectAttributes.addFlashAttribute("error", "User not found");
+        } catch (ConnectionUserException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "handle connection failed");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "system error");
         }
 
 //        return "redirect:/relation";
-        return new RedirectView("relation", true);
+        return new RedirectView("/relation", true);
     }
 }

@@ -1,9 +1,6 @@
 package com.yoann.pay_my_buddy.unit.service;
 
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
-import com.yoann.pay_my_buddy.exception.SameUserInConnectionUserException;
-import com.yoann.pay_my_buddy.exception.UserIsNullException;
-import com.yoann.pay_my_buddy.exception.UserNotFoundException;
+import com.yoann.pay_my_buddy.exception.*;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
@@ -60,7 +57,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void addConnectionUser_thenSuccess() throws InvalidTypeIdException {
+    public void addConnectionUser_thenSuccess() throws ConnectionUserException {
         User authUser = new User();
         authUser.setId(1L);
         User userToConnect = new User();
@@ -86,13 +83,13 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void tryToAddConnection_whenUserToConnectIsNull_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), null)).isInstanceOf(UserIsNullException.class);
+    public void addConnectionUser_whenUserToConnectIsNull_thenThrowException() throws NullUserConnectionUserException {
+        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), null)).isInstanceOf(NullUserConnectionUserException.class);
     }
 
     @Test
     public void tryToAddConnection_whenCurrentUserIsNull_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionToUser(null, new User())).isInstanceOf(UserIsNullException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(null, new User())).isInstanceOf(NullUserConnectionUserException.class);
     }
 
     @Test
@@ -100,11 +97,11 @@ public class UserServiceImplTest {
         User authUser = new User();
         authUser.setId(1L);
 
-        assertThatThrownBy(() -> userService.addConnectionToUser(authUser, authUser)).isInstanceOf(SameUserInConnectionUserException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(authUser, authUser)).isInstanceOf(SameUserConnectionUserException.class);
     }
 
     @Test
     public void tryToAddConnection_withUserWithoutId_thenThrowException() {
-        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), new User())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> userService.addConnectionToUser(new User(), new User())).isInstanceOf(NullUserIdConnectionUserException.class);
     }
 }

@@ -1,6 +1,6 @@
 package com.yoann.pay_my_buddy.service;
 
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
+import com.yoann.pay_my_buddy.exception.ConnectionUserException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.model.User;
 
@@ -17,7 +17,7 @@ public interface UserService {
 
     User updateUser(User user);
 
-    User addConnectionToUser(User currentUser, User userToConnect) throws InvalidTypeIdException;
+    User addConnectionToUser(User currentUser, User userToConnect) throws ConnectionUserException;
 
     List<User> getConnectedUsersFromUser(User user);
 

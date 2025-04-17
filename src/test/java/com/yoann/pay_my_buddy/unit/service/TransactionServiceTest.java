@@ -2,7 +2,7 @@ package com.yoann.pay_my_buddy.unit.service;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
-import com.yoann.pay_my_buddy.exception.SameUserInTransactionException;
+import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
@@ -90,7 +90,7 @@ public class TransactionServiceTest {
         transaction.setSenderUser(user);
         transaction.setReceiverUser(user);
 
-        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(SameUserInTransactionException.class);
+        assertThatThrownBy(() -> transactionService.addTransaction(transaction)).isInstanceOf(SameUserTransactionException.class);
     }
 
     @Test

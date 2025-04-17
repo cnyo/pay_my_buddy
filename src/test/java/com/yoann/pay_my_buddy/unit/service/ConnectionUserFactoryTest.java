@@ -1,6 +1,6 @@
 package com.yoann.pay_my_buddy.unit.service;
 
-import com.yoann.pay_my_buddy.exception.UserIsNullException;
+import com.yoann.pay_my_buddy.exception.NullUserConnectionUserException;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.ConnectionUserFactory;
@@ -25,7 +25,7 @@ public class ConnectionUserFactoryTest {
     }
 
     @Test
-    public void createConnectionUser_forUsers_thenReturnConnectionUser() {
+    public void createConnectionUser_forUsers_thenReturnConnectionUser() throws NullUserConnectionUserException {
         User currentUser = new User();
         currentUser.setId(1L);
         User userToConnect = new User();
@@ -41,11 +41,11 @@ public class ConnectionUserFactoryTest {
 
     @Test
     public void createConnectionUser_withNullUser_thenReturnException() {
-        assertThatThrownBy(() -> connectionUserFactory.createConnectionUser(null, new User())).isInstanceOf(UserIsNullException.class);
+        assertThatThrownBy(() -> connectionUserFactory.createConnectionUser(null, new User())).isInstanceOf(NullUserConnectionUserException.class);
     }
 
     @Test
     public void createConnectionUser_withNullUserToConnect_thenReturnException() {
-        assertThatThrownBy(() -> connectionUserFactory.createConnectionUser(new User(), null)).isInstanceOf(UserIsNullException.class);
+        assertThatThrownBy(() -> connectionUserFactory.createConnectionUser(new User(), null)).isInstanceOf(NullUserConnectionUserException.class);
     }
 }
