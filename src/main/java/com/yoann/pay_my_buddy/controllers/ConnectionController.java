@@ -6,6 +6,7 @@ import com.yoann.pay_my_buddy.forms.ConnectionUserForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.utils.ValidationUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class ConnectionController {
@@ -26,26 +26,26 @@ public class ConnectionController {
     private UserService userService;
 
     @GetMapping("/relation")
-    public String relation(Model model) {
+    public String relation(HttpServletRequest request, Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
         model.addAttribute("user", new User());
 
         return "relation";
     }
 
     @PostMapping("/relation")
-    public RedirectView addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, RedirectAttributes redirectAttributes) throws ConnectionUserException {
+    public String addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, RedirectAttributes redirectAttributes) throws ConnectionUserException {
         log.info("Post /relation Add connection with user by email");
 
         if (errors.hasErrors()) {
             log.error("Post /relation {}", errors.getAllErrors());
             redirectAttributes.addFlashAttribute("error", "Errors in relation");
-            return new RedirectView("/relation");
+            return "redirect:/relation";
         }
 
         if (!ValidationUtils.emailIsValid(form.getEmail())) {
             log.error("Post /relation Email is invalid");
             redirectAttributes.addFlashAttribute("error", "Email is invalid");
-            return new RedirectView("/relation");
+            return "redirect:/relation";
         }
 
         try {
@@ -64,7 +64,6 @@ public class ConnectionController {
             redirectAttributes.addFlashAttribute("error", "system error");
         }
 
-//        return "redirect:/relation";
-        return new RedirectView("/relation", true);
+        return "redirect:/relation";
     }
 }
