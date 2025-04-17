@@ -1,4 +1,4 @@
-package com.yoann.pay_my_buddy.controller;
+package com.yoann.pay_my_buddy.integration.repository.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TransactionControllerTest {
+public class TransactionControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
