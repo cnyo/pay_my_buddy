@@ -46,6 +46,8 @@ public class RegistrationController {
             redirectAttributes.addFlashAttribute("messageType", "success");
             redirectAttributes.addFlashAttribute("message", "Registration success !");
             redirectAttributes.addFlashAttribute("user", user);
+
+            return "redirect:/login";
         } catch (BadRegistrationDataException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "error");
@@ -56,6 +58,6 @@ public class RegistrationController {
             redirectAttributes.addFlashAttribute("message", "Registration error !");
         }
 
-        return "redirect:/login";
+        return "redirect:/registration";
     }
 }
