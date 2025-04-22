@@ -1,17 +1,20 @@
 package com.yoann.pay_my_buddy.unit.service;
 
 import com.yoann.pay_my_buddy.exception.*;
+import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
 import com.yoann.pay_my_buddy.service.ConnectionUserFactory;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.service.UserServiceImpl;
+import com.yoann.pay_my_buddy.utils.EncoderUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -32,6 +35,9 @@ public class UserServiceImplTest {
 
     @Mock
     private ConnectionUserFactory connectionUserFactory;
+
+    @Mock
+    private EncoderUtils encoder;
 
     @BeforeAll
     public static void setUp() {
@@ -103,5 +109,42 @@ public class UserServiceImplTest {
     @Test
     public void tryToAddConnection_withUserWithoutId_thenThrowException() {
         assertThatThrownBy(() -> userService.addConnectionToUser(new User(), new User())).isInstanceOf(NullUserIdConnectionUserException.class);
+    }
+
+    @Test
+    public void initUserFromRegistrationForm_withValidData_thenReturnUser() throws BadRegistrationDataException {
+        BCryptPasswordEncoder bCryptEncoder = new BCryptPasswordEncoder();
+
+        RegistrationForm form = new RegistrationForm();
+        form.setUsername("username");
+        form.setEmail("email@email.com");
+        form.setPassword("password");
+        String encodePassword = bCryptEncoder.encode(form.getPassword());
+
+        User user = new User();
+        user.setUsername("username");
+        user.setEmail("email@email.com");
+        user.setPassword(encodePassword);
+
+        when(encoder.encodePassword(anyString())).thenReturn(encodePassword);
+
+        User result = userService.initUserFromRegistrationForm(form);
+
+        assertThat(result).isInstanceOf(User.class);
+        assertThat(result.getUsername()).isEqualTo(form.getUsername());
+        assertThat(result.getEmail()).isEqualTo(form.getEmail());
+        assertThat(result.getPassword()).isEqualTo(encodePassword);
+    }
+
+    @Test
+    public void initUserFromRegistrationForm_withBadEmail_thenThrowException() {
+        RegistrationForm form = new RegistrationForm();
+        form.setUsername("username");
+        form.setEmail("email.email.com");
+        form.setPassword("password");
+
+        assertThatThrownBy(() -> userService.initUserFromRegistrationForm(form))
+                .isInstanceOf(BadRegistrationDataException.class)
+                .hasMessageContaining("Email is invalid");
     }
 }

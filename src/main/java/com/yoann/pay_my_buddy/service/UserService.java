@@ -1,5 +1,6 @@
 package com.yoann.pay_my_buddy.service;
 
+import com.yoann.pay_my_buddy.exception.BadRegistrationDataException;
 import com.yoann.pay_my_buddy.exception.ConnectionUserException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.forms.RegistrationForm;
@@ -24,5 +25,5 @@ public interface UserService {
 
     User getUserByEmail(String email) throws UserNotFoundException;
 
-    User initUserFromRegistrationForm(RegistrationForm form);
+    User initUserFromRegistrationForm(RegistrationForm form) throws BadRegistrationDataException;
 }

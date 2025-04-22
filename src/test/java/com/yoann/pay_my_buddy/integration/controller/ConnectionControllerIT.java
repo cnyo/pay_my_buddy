@@ -1,4 +1,4 @@
-package com.yoann.pay_my_buddy.integration.repository.controller;
+package com.yoann.pay_my_buddy.integration.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

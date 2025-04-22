@@ -1,5 +1,6 @@
 package com.yoann.pay_my_buddy.controllers;
 
+import com.yoann.pay_my_buddy.exception.BadRegistrationDataException;
 import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
@@ -34,19 +35,27 @@ public class RegistrationController {
     public String registration(@Validated RegistrationForm form, Errors errors, RedirectAttributes redirectAttributes) {
 
         try {
-            log.info("Post /registration Create new user");
+            if (errors.hasErrors()) {
+                throw new BadRegistrationDataException(errors.getAllErrors().toString());
+            }
+
+            log.info("Post /registration Create an account");
             User user = userService.initUserFromRegistrationForm(form);
             user = userService.addUser(user);
 
             redirectAttributes.addFlashAttribute("messageType", "success");
             redirectAttributes.addFlashAttribute("message", "Registration success !");
             redirectAttributes.addFlashAttribute("user", user);
+        } catch (BadRegistrationDataException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "error");
             redirectAttributes.addFlashAttribute("message", "Registration error !");
         }
 
-        return "redirect:/registration";
+        return "redirect:/login";
     }
 }

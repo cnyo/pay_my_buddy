@@ -5,6 +5,8 @@ import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
+import com.yoann.pay_my_buddy.utils.EncoderUtils;
+import com.yoann.pay_my_buddy.utils.ValidationUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ConnectionUserFactory connectionUserFactory;
+
+    @Autowired
+    EncoderUtils encoder;
 
     private final Logger log = LogManager.getLogger(UserServiceImpl.class);
 
@@ -109,13 +114,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User initUserFromRegistrationForm(RegistrationForm form) {
+    public User initUserFromRegistrationForm(RegistrationForm form) throws BadRegistrationDataException {
         log.debug("Init user from registration form");
+
+        if (!ValidationUtils.emailIsValid(form.getEmail())) {
+            log.error("email {} is invalid", form.getEmail());
+            throw new BadRegistrationDataException("Email is invalid");
+        }
 
         User user = new User();
         user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
-        user.setPassword(form.getPassword());
+        user.setPassword(encoder.encodePassword(form.getPassword()));
 
         return user;
     }
