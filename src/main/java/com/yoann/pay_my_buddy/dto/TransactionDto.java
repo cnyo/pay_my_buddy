@@ -3,8 +3,11 @@ package com.yoann.pay_my_buddy.dto;
 import com.yoann.pay_my_buddy.model.Transaction;
 
 public class TransactionDto {
+    private final String EURO = "€";
+
     private String description;
     private double amount;
+    private String amountCurrency;
     private Long senderUserId;
     private Long receiverUserId;
     private String receiverUsername;
@@ -12,6 +15,7 @@ public class TransactionDto {
     public TransactionDto(Transaction transaction) {
         this.description = transaction.getDescription();
         this.amount = transaction.getAmount();
+        this.amountCurrency = transaction.getAmount() + EURO;
         this.senderUserId = transaction.getSenderUser().getId();
         this.receiverUserId = transaction.getReceiverUser().getId();
         this.receiverUsername = transaction.getReceiverUser().getUsername();
@@ -58,5 +62,13 @@ public class TransactionDto {
 
     public void setReceiverUsername(String receiverUsername) {
         this.receiverUsername = receiverUsername;
+    }
+
+    public String getAmountCurrency() {
+        return amountCurrency;
+    }
+
+    public void setAmountCurrency(String amountCurrency) {
+        this.amountCurrency = amountCurrency;
     }
 }
