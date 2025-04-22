@@ -116,13 +116,11 @@ public class UserServiceImplTest {
         BCryptPasswordEncoder bCryptEncoder = new BCryptPasswordEncoder();
 
         RegistrationForm form = new RegistrationForm();
-        form.setUsername("username");
         form.setEmail("email@email.com");
         form.setPassword("password");
         String encodePassword = bCryptEncoder.encode(form.getPassword());
 
         User user = new User();
-        user.setUsername("username");
         user.setEmail("email@email.com");
         user.setPassword(encodePassword);
 
@@ -131,7 +129,6 @@ public class UserServiceImplTest {
         User result = userService.initUserFromRegistrationForm(form);
 
         assertThat(result).isInstanceOf(User.class);
-        assertThat(result.getUsername()).isEqualTo(form.getUsername());
         assertThat(result.getEmail()).isEqualTo(form.getEmail());
         assertThat(result.getPassword()).isEqualTo(encodePassword);
     }
@@ -139,7 +136,6 @@ public class UserServiceImplTest {
     @Test
     public void initUserFromRegistrationForm_withBadEmail_thenThrowException() {
         RegistrationForm form = new RegistrationForm();
-        form.setUsername("username");
         form.setEmail("email.email.com");
         form.setPassword("password");
 

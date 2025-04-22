@@ -87,7 +87,7 @@ public class RegistrationControllerTest {
                 .andExpect(view().name("redirect:/registration"))
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("messageType", "error"))
+                .andExpect(flash().attribute("messageType", "warning"))
         ;
     }
 
@@ -105,7 +105,7 @@ public class RegistrationControllerTest {
                 .andExpect(view().name("redirect:/registration"))
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("messageType", "error"))
+                .andExpect(flash().attribute("messageType", "warning"))
         ;
     }
 }

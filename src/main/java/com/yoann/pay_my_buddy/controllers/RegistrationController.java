@@ -26,7 +26,7 @@ public class RegistrationController {
 
     @GetMapping("/registration")
     public String registration(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("form", new RegistrationForm());
 
         return "registration";
     }
@@ -50,11 +50,11 @@ public class RegistrationController {
             return "redirect:/login";
         } catch (BadRegistrationDataException e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("messageType", "error");
+            redirectAttributes.addFlashAttribute("messageType", "warning");
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("messageType", "error");
+            redirectAttributes.addFlashAttribute("messageType", "warning");
             redirectAttributes.addFlashAttribute("message", "Registration error !");
         }
 
