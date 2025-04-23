@@ -1,0 +1,183 @@
+package com.yoann.pay_my_buddy.unit.controller;
+
+import com.yoann.pay_my_buddy.controllers.ProfileController;
+import com.yoann.pay_my_buddy.forms.ProfileForm;
+import com.yoann.pay_my_buddy.model.User;
+import com.yoann.pay_my_buddy.service.UserServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(controllers = {ProfileController.class})
+@AutoConfigureMockMvc
+public class ProfileControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private UserServiceImpl userService;
+
+    @Captor
+    private ArgumentCaptor<ProfileForm> formCaptor;
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void whenGetProfilePage_whenShowUserForm() throws Exception {
+        // Arrange
+        User authUser = new User();
+        authUser.setUsername("jdoe");
+        authUser.setEmail("jdoe@email.com");
+        authUser.setPassword("password");
+
+        when(userService.getUserByUsername(anyString())).thenReturn(authUser);
+
+        // Act
+        ResultActions result = mockMvc.perform(get("/profile"))
+                .andDo(print());
+
+        // Assert
+        result
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("profile"))
+                .andExpect(content().string(containsString("jdoe")))
+                .andExpect(content().string(containsString("jdoe@email.com")));
+    }
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
+        // Test that the profile update redirects correctly with a success message
+
+        // Arrange
+        User authUser = new User();
+        authUser.setId(1L);
+        authUser.setUsername("jdoe");
+        authUser.setEmail("jdoe@email.com");
+        authUser.setPassword("password");
+
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoe");
+        form.setEmail("jdoe@email.com");
+        form.setPassword("password");
+
+        User updatedUser = new User();
+        authUser.setId(1L);
+        updatedUser.setUsername(form.getUsername());
+        updatedUser.setEmail(form.getEmail());
+        updatedUser.setPassword(form.getPassword());
+
+        when(userService.getUserByUsername(anyString())).thenReturn(authUser);
+        when(userService.updateUserFromProfileForm(anyLong(), any())).thenReturn(updatedUser);
+
+        // Act
+        ResultActions result = mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", form.getUsername())
+                        .param("email", form.getEmail())
+                        .param("password", form.getPassword())
+                )
+                .andDo(print());
+
+        // Assert
+        result.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile"))
+                .andExpect(flash().attributeExists("message_type"))
+                .andExpect(flash().attribute("message_type", "success"))
+                .andExpect(flash().attributeExists("message"));
+
+        verify(userService).updateUserFromProfileForm(eq(1L), formCaptor.capture());
+        ProfileForm capturedForm = formCaptor.getValue();
+        assertThat(capturedForm.getUsername()).isEqualTo(updatedUser.getUsername());
+        assertThat(capturedForm.getEmail()).isEqualTo(updatedUser.getEmail());
+        assertThat(capturedForm.getPassword()).isNotBlank();
+    }
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void givenUnValidUserData_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
+        // Test that the profile update with bad data redirects correctly with an error message
+
+        // Act
+        ResultActions badUsernameResult = mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")
+                        .param("email", "johndoe@email.com")
+                        .param("password", "password")
+                )
+                .andDo(print());
+
+        ResultActions badEmailResult = mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "johndoe")
+                        .param("email", "johndoeemail.com")
+                        .param("password", "password")
+                )
+                .andDo(print());
+
+        // Assert
+        badUsernameResult.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile"))
+                .andExpect(flash().attributeExists("message_type"))
+                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attributeExists("message"));
+
+        badEmailResult.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile"))
+                .andExpect(flash().attributeExists("message_type"))
+                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attributeExists("message"));
+
+        verify(userService, times(0)).updateUserFromProfileForm(anyLong(), any());
+    }
+
+    @Test
+    @WithMockUser(username = "jdoe")
+    public void givenNoneExistsUserId_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
+        // Test that the profile update with none exists user redirects correctly with an error message
+
+        // Arrange
+        when(userService.getUser(anyLong())).thenThrow(NullPointerException.class);
+
+        // Act
+        ResultActions result = mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "johndoe")
+                        .param("email", "johndoe@email.com")
+                        .param("password", "password")
+                )
+                .andDo(print());
+
+        // Assert
+        result.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile"))
+                .andExpect(flash().attributeExists("message_type"))
+                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attributeExists("message"))
+                .andExpect(flash().attribute("message", "User not found"));
+
+        verify(userService, times(0)).updateUserFromProfileForm(anyLong(), any());
+    }
+
+}

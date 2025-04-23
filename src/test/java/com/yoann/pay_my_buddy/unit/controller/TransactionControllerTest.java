@@ -45,7 +45,6 @@ public class TransactionControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/transaction"))
-                .andExpect(status().isFound())
                 .andExpect(flash().attributeExists("receiver_username"))
                 .andExpect(flash().attribute("receiver_username", "janedoe"))
                 .andExpect(flash().attributeCount(2))

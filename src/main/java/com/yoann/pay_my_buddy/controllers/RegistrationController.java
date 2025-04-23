@@ -32,7 +32,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String registration(@Validated RegistrationForm form, Errors errors, RedirectAttributes redirectAttributes) {
+    public String saveRegistration(@Validated RegistrationForm form, Errors errors, RedirectAttributes redirectAttributes) {
 
         try {
             if (errors.hasErrors()) {

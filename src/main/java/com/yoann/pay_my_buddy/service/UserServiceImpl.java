@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.service;
 
 import com.yoann.pay_my_buddy.exception.*;
+import com.yoann.pay_my_buddy.forms.ProfileForm;
 import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
@@ -49,15 +50,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean removeUser(User toDeleteUser) {
-        log.debug("remove user");
-        return true;
+    public User updateUser(User user) throws UserNotFoundException, BadRegistrationDataException {
+        log.debug("Updating user");
+        return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(User user) {
-        log.debug("Updating user");
-        return userRepository.save(user);
+    public User updateUserFromProfileForm(Long id, ProfileForm form) throws UserNotFoundException, BadRegistrationDataException {
+        log.debug("Updating user with id");
+
+        return null;
+//        return userRepository.save(user);
     }
 
     @Override
@@ -68,7 +71,7 @@ public class UserServiceImpl implements UserService {
         ConnectionUser connectionUser = connectionUserFactory.createConnectionUser(currentUser, userToConnect);
         attachConnectionToUser(connectionUser, currentUser);
 
-        return updateUser(currentUser);
+        return userRepository.save(currentUser);
     }
 
     @Override
@@ -86,6 +89,7 @@ public class UserServiceImpl implements UserService {
     private void validateUsers(User currentUser, User userToConnect) throws NullUserConnectionUserException, SameUserConnectionUserException, NullUserIdConnectionUserException {
         if (currentUser == null || userToConnect == null) {
             log.error("id of current user or user to connect is null");
+//            throw new NullPointerException("id of current user or user to connect is null");
             throw new NullUserConnectionUserException();
         }
 
@@ -127,5 +131,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encodePassword(form.getPassword()));
 
         return user;
+    }
+
+    @Override
+    public User getUserByUsername(String username) throws UserNotFoundException {
+        return null;
     }
 }
