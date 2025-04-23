@@ -39,7 +39,8 @@ public class ProfileController {
             }
 
             User authUser = userService.getUserByUsername(userDetails.getUsername());
-            userService.updateUserFromProfileForm(authUser.getId(), form);
+            User updatedUser = userService.profileFormToUser(authUser.getId(), form);
+            userService.updateUser(updatedUser);
             redirectAttributes.addFlashAttribute("message_type", "success");
             redirectAttributes.addFlashAttribute("message", "User updated successfully");
         } catch (NullPointerException e) {

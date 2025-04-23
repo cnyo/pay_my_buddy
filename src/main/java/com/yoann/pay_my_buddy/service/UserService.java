@@ -16,9 +16,9 @@ public interface UserService {
 
     User addUser(User user);
 
-    User updateUser(User user) throws UserNotFoundException, BadRegistrationDataException;
+    User updateUser(User user) throws IllegalArgumentException, UserNotFoundException;
 
-    User updateUserFromProfileForm(Long id, ProfileForm form) throws UserNotFoundException, BadRegistrationDataException;
+    User profileFormToUser(Long id, ProfileForm form) throws IllegalArgumentException, NullPointerException;
 
     User addConnectionToUser(User currentUser, User userToConnect) throws ConnectionUserException;
 
@@ -28,5 +28,5 @@ public interface UserService {
 
     User initUserFromRegistrationForm(RegistrationForm form) throws BadRegistrationDataException;
 
-    User getUserByUsername(String username) throws UserNotFoundException;
+    User getUserByUsername(String username) throws IllegalArgumentException, NullPointerException;
 }

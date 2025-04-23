@@ -1,6 +1,8 @@
 package com.yoann.pay_my_buddy.unit.service;
 
+import com.yoann.pay_my_buddy.enums.UserExceptionMessage;
 import com.yoann.pay_my_buddy.exception.*;
+import com.yoann.pay_my_buddy.forms.ProfileForm;
 import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
@@ -142,5 +144,128 @@ public class UserServiceImplTest {
         assertThatThrownBy(() -> userService.initUserFromRegistrationForm(form))
                 .isInstanceOf(BadRegistrationDataException.class)
                 .hasMessageContaining("Email is invalid");
+    }
+
+    @Test
+    public void givenUsername_whenGetUser_thenReturnUser() {
+        // Arrange
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+
+        // Act
+        User result = userService.getUserByUsername("jdoe");
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(user.getId());
+        assertThat(result.getUsername()).isEqualTo(user.getUsername());
+    }
+
+    @Test
+    public void givenEmptyUsername_whenGetUser_thenReturnException() {
+        // Assert
+        assertThatThrownBy(() -> userService.getUserByUsername(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void givenUsernameNotExists_whenGetUser_thenReturnException() {
+        // Arrange
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        // Assert
+        assertThatThrownBy(() -> userService.getUserByUsername("username")).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    public void givenProfileForm_whenConvertProfileFormToUser_thenReturnUser() {
+        // Arrange
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoe");
+        form.setEmail("email@email.com");
+        form.setPassword("password");
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        when(userRepository.save(any())).thenReturn(user);
+
+        // Act
+        User result = userService.profileFormToUser(1L, form);
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getUsername()).isEqualTo(user.getUsername());
+    }
+
+    @Test
+    public void givenNullProfileForm_whenConvertProfileFormToUser_thenThrowException() {
+        // Assert
+        assertThatThrownBy(() -> userService.profileFormToUser(1L, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
+    }
+
+    @Test
+    public void givenNullId_whenConvertProfileFormToUser_thenThrowException() {
+        // Assert
+        assertThatThrownBy(() -> userService.profileFormToUser(null, new ProfileForm()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(UserExceptionMessage.USER_ID_IS_NULL.getMessage());
+    }
+
+    @Test
+    public void givenUser_whenUpdateUser_thenReturnUser() throws UserNotFoundException {
+        // Arrange
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoe");
+        form.setEmail("email@email.com");
+        form.setPassword("password");
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        when(userRepository.existsById(any())).thenReturn(true);
+        when(userRepository.save(any())).thenReturn(user);
+
+        // Act
+        User result = userService.updateUser(user);
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getUsername()).isEqualTo(user.getUsername());
+    }
+
+    @Test
+    public void givenEmptyUser_whenUpdateUser_thenThrowException() {
+        // Assert
+        assertThatThrownBy(() -> userService.updateUser(null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void givenNotExistsUser_whenUpdateUser_thenThrowException() {
+        // Arrange
+        User user = new User();
+        user.setId(100L);
+        user.setUsername("jojo");
+        user.setEmail("jojo@email.com");
+        user.setPassword("password");
+
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        // Assert
+        assertThatThrownBy(() -> userService.updateUser(user)).isInstanceOf(UserNotFoundException.class);
     }
 }

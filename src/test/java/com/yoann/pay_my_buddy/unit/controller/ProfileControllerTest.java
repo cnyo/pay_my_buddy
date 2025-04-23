@@ -85,7 +85,8 @@ public class ProfileControllerTest {
         updatedUser.setPassword(form.getPassword());
 
         when(userService.getUserByUsername(anyString())).thenReturn(authUser);
-        when(userService.updateUserFromProfileForm(anyLong(), any())).thenReturn(updatedUser);
+        when(userService.profileFormToUser(anyLong(), any())).thenReturn(updatedUser);
+        when(userService.updateUser(any())).thenReturn(updatedUser);
 
         // Act
         ResultActions result = mockMvc.perform(put("/profile")
@@ -104,7 +105,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attribute("message_type", "success"))
                 .andExpect(flash().attributeExists("message"));
 
-        verify(userService).updateUserFromProfileForm(eq(1L), formCaptor.capture());
+        verify(userService).profileFormToUser(eq(1L), formCaptor.capture());
         ProfileForm capturedForm = formCaptor.getValue();
         assertThat(capturedForm.getUsername()).isEqualTo(updatedUser.getUsername());
         assertThat(capturedForm.getEmail()).isEqualTo(updatedUser.getEmail());
@@ -148,7 +149,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attribute("message_type", "error"))
                 .andExpect(flash().attributeExists("message"));
 
-        verify(userService, times(0)).updateUserFromProfileForm(anyLong(), any());
+        verify(userService, times(0)).profileFormToUser(anyLong(), any());
     }
 
     @Test
@@ -177,7 +178,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(flash().attribute("message", "User not found"));
 
-        verify(userService, times(0)).updateUserFromProfileForm(anyLong(), any());
+        verify(userService, times(0)).profileFormToUser(anyLong(), any());
     }
 
 }

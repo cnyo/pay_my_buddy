@@ -1,5 +1,6 @@
 package com.yoann.pay_my_buddy.service;
 
+import com.yoann.pay_my_buddy.enums.UserExceptionMessage;
 import com.yoann.pay_my_buddy.exception.*;
 import com.yoann.pay_my_buddy.forms.ProfileForm;
 import com.yoann.pay_my_buddy.forms.RegistrationForm;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -50,17 +52,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user) throws UserNotFoundException, BadRegistrationDataException {
+    public User updateUser(User user) throws IllegalArgumentException, UserNotFoundException {
         log.debug("Updating user");
+
+        if (user == null) {
+            log.debug("user is null");
+            throw new IllegalArgumentException(UserExceptionMessage.USER_IS_NULL.getMessage());
+        }
+
+        if (!userRepository.existsById(user.getId())) {
+            throw new UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND.getMessage());
+        }
+
         return userRepository.save(user);
     }
 
     @Override
-    public User updateUserFromProfileForm(Long id, ProfileForm form) throws UserNotFoundException, BadRegistrationDataException {
-        log.debug("Updating user with id");
+    public User profileFormToUser(Long id, ProfileForm form) throws IllegalArgumentException, NullPointerException {
+        log.debug("Convert ProfileForm to user");
 
-        return null;
-//        return userRepository.save(user);
+        if (id == null) {
+            log.error("id is null");
+            throw new IllegalArgumentException(UserExceptionMessage.USER_ID_IS_NULL.getMessage());
+        }
+
+        if (form == null) {
+            log.error("form is null");
+            throw new NullPointerException(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
+        }
+
+        User user = new User();
+        user.setId(id);
+        user.setUsername(form.getUsername());
+        user.setEmail(form.getEmail());
+        user.setPassword(encoder.encodePassword(form.getPassword()));
+
+        log.debug("ProfileForm converted to user successfully");
+
+        return user;
     }
 
     @Override
@@ -89,7 +118,6 @@ public class UserServiceImpl implements UserService {
     private void validateUsers(User currentUser, User userToConnect) throws NullUserConnectionUserException, SameUserConnectionUserException, NullUserIdConnectionUserException {
         if (currentUser == null || userToConnect == null) {
             log.error("id of current user or user to connect is null");
-//            throw new NullPointerException("id of current user or user to connect is null");
             throw new NullUserConnectionUserException();
         }
 
@@ -134,7 +162,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUsername(String username) throws UserNotFoundException {
-        return null;
+    public User getUserByUsername(String username) throws IllegalArgumentException, NullPointerException {
+        if (username == null) {
+            throw new IllegalArgumentException(UserExceptionMessage.USERNAME_IS_EMPTY.getMessage());
+        }
+
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user.isEmpty()) {
+            throw new NullPointerException(UserExceptionMessage.USER_NOT_FOUND.getMessage());
+        }
+
+        return user.get();
     }
 }

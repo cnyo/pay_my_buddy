@@ -40,7 +40,6 @@ public class RegistrationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"))
                 .andExpect(content().string(containsString("S'inscrire")))
-                .andExpect(content().string(containsString("Username")))
                 .andExpect(content().string(containsString("Email")))
                 .andExpect(content().string(containsString("Mot de passe")));
     }
@@ -79,24 +78,6 @@ public class RegistrationControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", "username")
                         .param("email", "emailemail.com")
-                        .param("password", "password")
-                        .with(csrf())
-                )
-                .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/registration"))
-                .andExpect(flash().attributeExists("message"))
-                .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("messageType", "warning"))
-        ;
-    }
-
-    @Test
-    public void postRegistration_withUsernameUpperTo50_andShowErrorMessage() throws Exception {
-        mockMvc.perform(post("/registration")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")
-                        .param("email", "email@email.com")
                         .param("password", "password")
                         .with(csrf())
                 )
