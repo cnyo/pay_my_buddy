@@ -8,13 +8,11 @@
 
 Initialisation des données
 ```
-psql -h localhost -p 5432 -U postgres -f ./resources/data.sql
+psql -h localhost -p 5432 -U postgres -f ./src/main/resources/init_database.sql
+psql -h localhost -p 5432 -U postgres -f ./src/main/resources/data.sql
 ```
 
 Vérification de l'initialisation
 ```
 psql -h localhost -p 5432 -U postgres -d pay_my_buddy -c "\dt"
 ```
-
-
-

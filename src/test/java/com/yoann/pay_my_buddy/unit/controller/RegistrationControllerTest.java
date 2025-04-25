@@ -40,7 +40,7 @@ public class RegistrationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("registration"))
                 .andExpect(content().string(containsString("S'inscrire")))
-                .andExpect(content().string(containsString("Email")))
+                .andExpect(content().string(containsString("Mail")))
                 .andExpect(content().string(containsString("Mot de passe")));
     }
 
