@@ -30,12 +30,12 @@ public class SpringSecurityConfig {
                     authorizeRequests.anyRequest().authenticated();
                 })
                 .formLogin(form -> form
-                        .loginPage("/login")                     // Chemin vers ton template personnalisé
-                        .defaultSuccessUrl("/", true)            // Redirection après login
-                        .permitAll()                             // Tout le monde peut accéder à /login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/relation", true)
+                        .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")       // Redirection après déconnexion
+                        .logoutSuccessUrl("/login?logout")
                 )
         ;
 

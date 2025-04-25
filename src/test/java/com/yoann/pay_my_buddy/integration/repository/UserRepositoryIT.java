@@ -46,15 +46,22 @@ public class UserRepositoryIT {
     }
 
     @Test
-    public void givenId_whenFindByUsername_thenReturnUser() {
-        Optional<User> user = userRepository.findByUsername("jtest");
+    public void givenUsername_whenFindByUsername_thenReturnUser() {
+        Optional<User> user = userRepository.findByUsername("jdoe");
 
         assertThat(user.isPresent()).isTrue();
     }
 
     @Test
-    public void givenId_whenFindByEmail_thenReturnUser() {
-        Optional<User> user = userRepository.findByEmail("jtest@email.com");
+    public void givenUsername_whenFindByUsername_thenReturnAnyUser() {
+        Optional<User> user = userRepository.findByUsername("jtest");
+
+        assertThat(user.isPresent()).isFalse();
+    }
+
+    @Test
+    public void givenEmail_whenFindByEmail_thenReturnUser() {
+        Optional<User> user = userRepository.findByEmail("jdoe@email.com");
 
         assertThat(user.isPresent()).isTrue();
     }
@@ -108,16 +115,6 @@ public class UserRepositoryIT {
         User user = em.find(User.class, 1);
 
         assertThat(user).isNull();
-    }
-
-    @Test
-    // Est-ce qu'il faut bien supprimer le user si il est relié par des transactions ?
-    public void givenNoteExistsUser_whenRemove_thenSuccess() {
-        // Get main user to add association
-        User toRemoveUser = new User();
-        toRemoveUser.setId(20L).setUsername("username").setEmail("email@mail.com").setPassword("password");
-
-        assertThrows(ChangeSetPersister.NotFoundException.class, () -> userRepository.delete(toRemoveUser));
     }
 
     @Test

@@ -23,6 +23,7 @@ public class TransactionControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    @WithMockUser(username = "jdoe")
     public void getTransactionPage_displaysAssociatedUsersAndForm() throws Exception {
         mockMvc.perform(get("/transaction"))
                 .andDo(print())

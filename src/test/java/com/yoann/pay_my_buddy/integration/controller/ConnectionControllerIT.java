@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -20,6 +21,7 @@ public class ConnectionControllerIT {
     private MockMvc mockMvc;
 
     @Test
+    @WithMockUser(username = "jdoe")
     public void getAddConnectionPage_displaysForm() throws Exception {
         mockMvc.perform(get("/relation"))
                 .andDo(print())
@@ -29,6 +31,7 @@ public class ConnectionControllerIT {
     }
 
     @Test
+    @WithMockUser(username = "jdoe")
     public void postForm_mustBeSuccess() throws Exception {
         mockMvc.perform(get("/relation")
                         .with(csrf())
@@ -44,6 +47,7 @@ public class ConnectionControllerIT {
     }
 
     @Test
+    @WithMockUser(username = "jdoe")
     public void postForm_whenEmailIsBad_mustContentErrorMessage() throws Exception {
         mockMvc.perform(get("/relation")
                         .with(csrf())
