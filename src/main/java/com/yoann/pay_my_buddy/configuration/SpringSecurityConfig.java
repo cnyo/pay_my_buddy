@@ -3,6 +3,7 @@ package com.yoann.pay_my_buddy.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,7 +27,9 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("/login", "/registration").permitAll();
+                    authorizeRequests.requestMatchers("/login", "/test").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.GET, "/registration").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.POST, "/registration").permitAll();
                     authorizeRequests.anyRequest().authenticated();
                 })
                 .formLogin(form -> form
@@ -37,6 +40,7 @@ public class SpringSecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                 )
+                .httpBasic(Customizer.withDefaults())
         ;
 
         return http.build();
