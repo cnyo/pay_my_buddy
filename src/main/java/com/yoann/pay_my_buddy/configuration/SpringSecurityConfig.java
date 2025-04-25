@@ -24,13 +24,22 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("/admin").hasRole("ADMIN");
-                    authorizeRequests.requestMatchers("/user").hasRole("USER");
-                    authorizeRequests.anyRequest().permitAll();
+                    authorizeRequests.requestMatchers("/login", "/registration").permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
-                .formLogin(Customizer.withDefaults()).build();
+                .formLogin(form -> form
+                        .loginPage("/login")                     // Chemin vers ton template personnalisé
+                        .defaultSuccessUrl("/", true)            // Redirection après login
+                        .permitAll()                             // Tout le monde peut accéder à /login
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")       // Redirection après déconnexion
+                )
+        ;
+
+        return http.build();
     }
 
     @Bean
