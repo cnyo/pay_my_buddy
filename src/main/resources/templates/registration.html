@@ -7,17 +7,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
 </head>
-<body class="m-5">
-    <div th:replace="fragments/flash_message.html :: section"></div>
-    <section>
-        <form class="form-floating row g-3 align-items-center" method="post" action="#" th:action="@{/registration}" th:object="${form}">
-            <div class="mb-3 col-auto">
-                <input type="text" class="form-control" id="email" placeholder="Email" th:field="*{email}">
-                <input type="password" class="form-control" id="password" placeholder="Mot de passe" th:field="*{password}">
-                <button class="btn btn-info col-auto" type="submit">S'inscrire</button>
+<body>
+<main class="d-flex justify-content-center">
+    <div>
+
+        <div class="d-flex flex-column mb-3">
+            <div th:replace="fragments/flash_message.html :: section"></div>
+        </div>
+
+        <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" method="post" th:action="@{/registration}" th:object="${form}">
+            <h1 class="p-2 mx-auto mb-5 w-75 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
+
+            <div>
+                <label for="username" class="visually-hidden">Username</label>
+                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="username" name="username" placeholder="Username" autocomplete="username" th:field="*{username}" aria-describedby="error-message" />
+                <label for="mail" class="visually-hidden">Mail</label>
+                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="mail" name="mail" placeholder="Mail" autocomplete="mail" th:field="*{email}" aria-describedby="error-message" />
+                <label for="password" class="visually-hidden">Mot de passe</label>
+                <input type="password" class="form-control fw-bold text-secondary" id="password" name="password" placeholder="Mot de passe" th:field="*{password} autocomplete="current-password" />
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="mx-auto mt-5 btn btn-primary">S'inscrire</button>
             </div>
         </form>
-    </section>
-
+    </div>
+</main>
 </body>
 </html>
