@@ -31,20 +31,23 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login", "/test").permitAll();
+                    auth.requestMatchers("/login", "/test", "/logout").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/registration").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/registration").permitAll();
                     auth.anyRequest().authenticated();
                 })
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/transaction", true)
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
                 )
-                .httpBasic(Customizer.withDefaults())
+                .csrf(Customizer.withDefaults())
         ;
 
         return http.build();
