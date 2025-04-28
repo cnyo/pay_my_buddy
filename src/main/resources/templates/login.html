@@ -19,17 +19,17 @@
             </div>
         </div>
 
-        <form class="d-flex flex-column justify-content-between p-5 h-75 border border-dark" th:action="@{/login}" method="post">
-            <h1 class="p-2 mx-auto w-50 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
+        <form class="d-flex flex-column justify-content-between p-5 border border-dark" th:action="@{/login}" method="post">
+            <h1 class="p-2 mx-auto mb-5 w-50 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
 
             <div>
-                <label for="mail" class="visually-hidden">Mail</label>
-                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="mail" name="mail" placeholder="Mail" autocomplete="mail" aria-describedby="error-message" />
+                <label for="username" class="visually-hidden">Mail</label>
+                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="username" name="username" placeholder="Mail" autocomplete="username" aria-describedby="error-message" />
                 <label for="password" class="visually-hidden">Mot de passe</label>
                 <input type="password" class="form-control fw-bold text-secondary" id="password" name="password" placeholder="Mot de passe" autocomplete="current-password" />
             </div>
 
-            <div class="text-center">
+            <div class="text-center mt-5">
                 <button type="submit" class="mx-auto btn btn-primary">Se connecter</button>
             </div>
         </form>
