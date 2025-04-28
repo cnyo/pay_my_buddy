@@ -1,6 +1,10 @@
 -- This file is used to initialize the database with some data.
 
---\c pay_my_buddy
+-- TRUNCATE TABLE transaction RESTART IDENTITY CASCADE;
+-- TRUNCATE TABLE connection_user RESTART IDENTITY CASCADE;
+-- TRUNCATE TABLE "user" RESTART IDENTITY CASCADE;
+
+-- USE pay_my_buddy;
 
 CREATE TABLE IF NOT EXISTS "user" (
     id SERIAL NOT NULL PRIMARY KEY,
@@ -49,5 +53,5 @@ ON CONFLICT DO NOTHING;
 INSERT INTO connection_user (user_id, associated_user_id, date)
 VALUES (1, 2, CURRENT_DATE) ON CONFLICT DO NOTHING;
 
-INSERT INTO transaction (sender_user_id, receiver_user_id, description, amount, date)
-VALUES (1, 2, 'Ma description', '2400.69', NOW()) ON CONFLICT DO NOTHING;
+-- INSERT INTO transaction (sender_user_id, receiver_user_id, description, amount, date)
+-- VALUES (1, 2, 'Ma description', '2400.69', NOW()) ON CONFLICT DO NOTHING;
