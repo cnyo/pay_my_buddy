@@ -10,6 +10,8 @@ import com.yoann.pay_my_buddy.utils.ControllerHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -49,19 +51,17 @@ public class TransactionController {
     }
 
     @PostMapping("/transaction")
-    public RedirectView saveTransaction(@Validated Transaction transaction, Errors errors, RedirectAttributes redirectAttributes) {
+    public RedirectView saveTransaction(@Validated Transaction transaction, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
         log.info("Post /transaction Create new transaction: {}", transaction.getReceiverUser() != null ? transaction.getReceiverUser().getId() : "aucun receiver");
 
         if (errors.hasErrors()) {
             log.error("Post /transaction errors in transaction");
-            return new RedirectView("/transaction");
+            return new RedirectView("/");
         }
 
         try {
-            // todo : User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            User authUser = userService.getUser(1L);
+            User authUser = userService.getUserByEmail(userDetails.getUsername());
             transaction.setSenderUser(authUser);
-
             transaction = transactionService.addTransaction(transaction);
 
             redirectAttributes.addFlashAttribute("receiver_username", transaction.getReceiverUser().getUsername());
@@ -76,6 +76,6 @@ public class TransactionController {
             redirectAttributes.addFlashAttribute("message", "success");
         }
 
-        return new RedirectView("/transaction", true);
+        return new RedirectView("/", true);
     }
 }

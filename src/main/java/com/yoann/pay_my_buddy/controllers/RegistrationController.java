@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class RegistrationController {
-    private final Logger log = LogManager.getLogger(TransactionController.class);
+    private final Logger log = LogManager.getLogger(RegistrationController.class);
 
     private final UserService userService;
 
