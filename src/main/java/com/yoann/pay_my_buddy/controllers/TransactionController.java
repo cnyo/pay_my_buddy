@@ -30,7 +30,7 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping("/transaction")
+    @GetMapping("/")
     public String transaction(Model model) {
         log.info("transaction view");
 
