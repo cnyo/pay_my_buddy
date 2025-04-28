@@ -1,5 +1,8 @@
 package com.yoann.pay_my_buddy.configuration;
 
+import com.yoann.pay_my_buddy.controllers.TransactionController;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +22,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
+    private final Logger log = LogManager.getLogger(TransactionController.class);
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -26,15 +30,15 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorizeRequests -> {
-                    authorizeRequests.requestMatchers("/login", "/test").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET, "/registration").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.POST, "/registration").permitAll();
-                    authorizeRequests.anyRequest().authenticated();
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/login", "/test").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/registration").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/registration").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/relation", true)
+                        .defaultSuccessUrl("/transaction", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

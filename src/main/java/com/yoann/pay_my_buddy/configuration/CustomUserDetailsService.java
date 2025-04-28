@@ -1,7 +1,10 @@
 package com.yoann.pay_my_buddy.configuration;
 
+import com.yoann.pay_my_buddy.controllers.TransactionController;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,16 +21,20 @@ import java.util.Optional;
 public class CustomUserDetailsService implements UserDetailsService {
     private final String DEFAULT_ROLE = "USER";
 
+    private final Logger log = LogManager.getLogger(TransactionController.class);
+
     @Autowired
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.debug("Load user by email");
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
+            log.error("User not found");
             throw new UsernameNotFoundException("User not found");
         }
-
+        log.debug("User found");
         return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(), getGrantedAuthorities(DEFAULT_ROLE));
     }
 
