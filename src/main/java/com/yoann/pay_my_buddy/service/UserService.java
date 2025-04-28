@@ -18,7 +18,7 @@ public interface UserService {
 
     User updateUser(User user) throws IllegalArgumentException, UserNotFoundException;
 
-    User profileFormToUser(Long id, ProfileForm form) throws IllegalArgumentException, NullPointerException;
+    User profileFormToUser(User user, ProfileForm form) throws IllegalArgumentException, NullPointerException;
 
     User addConnectionToUser(User currentUser, User userToConnect) throws ConnectionUserException;
 

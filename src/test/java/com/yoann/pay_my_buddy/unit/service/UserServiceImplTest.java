@@ -185,7 +185,7 @@ public class UserServiceImplTest {
     public void givenProfileForm_whenConvertProfileFormToUser_thenReturnUser() {
         // Arrange
         ProfileForm form = new ProfileForm();
-        form.setUsername("jdoe");
+        form.setUsername("jdoes");
         form.setEmail("email@email.com");
         form.setPassword("password");
 
@@ -198,18 +198,25 @@ public class UserServiceImplTest {
         when(userRepository.save(any())).thenReturn(user);
 
         // Act
-        User result = userService.profileFormToUser(1L, form);
+        User result = userService.profileFormToUser(user, form);
 
         // Assert
         assertThat(result.getId()).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getUsername()).isEqualTo(user.getUsername());
+        assertThat(result.getUsername()).isEqualTo(form.getUsername());
     }
 
     @Test
     public void givenNullProfileForm_whenConvertProfileFormToUser_thenThrowException() {
+        // Arrange
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
         // Assert
-        assertThatThrownBy(() -> userService.profileFormToUser(1L, null))
+        assertThatThrownBy(() -> userService.profileFormToUser(user, null))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
     }

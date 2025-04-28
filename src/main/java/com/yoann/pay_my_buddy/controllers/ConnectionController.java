@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ConnectionController {
 
-    private final Logger log = LogManager.getLogger(TransactionController.class);
+    private final Logger log = LogManager.getLogger(ConnectionController.class);
 
     @Autowired
     private UserService userService;

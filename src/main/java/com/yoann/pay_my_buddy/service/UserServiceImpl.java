@@ -68,10 +68,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User profileFormToUser(Long id, ProfileForm form) throws IllegalArgumentException, NullPointerException {
+    public User profileFormToUser(User user, ProfileForm form) throws IllegalArgumentException, NullPointerException {
         log.debug("Convert ProfileForm to user");
 
-        if (id == null) {
+        if (user == null) {
             log.error("id is null");
             throw new IllegalArgumentException(UserExceptionMessage.USER_ID_IS_NULL.getMessage());
         }
@@ -81,8 +81,6 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerException(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
         }
 
-        User user = new User();
-        user.setId(id);
         user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
         user.setPassword(encoder.encodePassword(form.getPassword()));

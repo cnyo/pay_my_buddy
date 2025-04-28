@@ -47,7 +47,7 @@ public class ProfileControllerTest {
         authUser.setEmail("jdoe@email.com");
         authUser.setPassword("password");
 
-        when(userService.getUserByUsername(anyString())).thenReturn(authUser);
+        when(userService.getUserByEmail(anyString())).thenReturn(authUser);
 
         // Act
         ResultActions result = mockMvc.perform(get("/profile"))
@@ -85,7 +85,7 @@ public class ProfileControllerTest {
         updatedUser.setPassword(form.getPassword());
 
         when(userService.getUserByUsername(anyString())).thenReturn(authUser);
-        when(userService.profileFormToUser(anyLong(), any())).thenReturn(updatedUser);
+        when(userService.profileFormToUser(any(), any())).thenReturn(updatedUser);
         when(userService.updateUser(any())).thenReturn(updatedUser);
 
         // Act
@@ -105,7 +105,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attribute("message_type", "success"))
                 .andExpect(flash().attributeExists("message"));
 
-        verify(userService).profileFormToUser(eq(1L), formCaptor.capture());
+        verify(userService).profileFormToUser(any(), formCaptor.capture());
         ProfileForm capturedForm = formCaptor.getValue();
         assertThat(capturedForm.getUsername()).isEqualTo(updatedUser.getUsername());
         assertThat(capturedForm.getEmail()).isEqualTo(updatedUser.getEmail());
@@ -119,9 +119,10 @@ public class ProfileControllerTest {
 
         // Act
         ResultActions badUsernameResult = mockMvc.perform(put("/profile")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(csrf())
-                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")
+                            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                            .with(csrf()
+                        )
+                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyssssssssssssssssssssssssssssssssssssssssssssss")
                         .param("email", "johndoe@email.com")
                         .param("password", "password")
                 )
@@ -129,7 +130,8 @@ public class ProfileControllerTest {
 
         ResultActions badEmailResult = mockMvc.perform(put("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(csrf())
+                        .with(csrf()
+                        )
                         .param("username", "johndoe")
                         .param("email", "johndoeemail.com")
                         .param("password", "password")
@@ -149,7 +151,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attribute("message_type", "error"))
                 .andExpect(flash().attributeExists("message"));
 
-        verify(userService, times(0)).profileFormToUser(anyLong(), any());
+        verify(userService, times(0)).profileFormToUser(any(), any());
     }
 
     @Test
@@ -158,13 +160,13 @@ public class ProfileControllerTest {
         // Test that the profile update with none exists user redirects correctly with an error message
 
         // Arrange
-        when(userService.getUser(anyLong())).thenThrow(NullPointerException.class);
+        when(userService.getUserByEmail(anyString())).thenThrow(NullPointerException.class);
 
         // Act
         ResultActions result = mockMvc.perform(put("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
-                        .param("username", "johndoe")
+                        .param("username", "jdoes")
                         .param("email", "johndoe@email.com")
                         .param("password", "password")
                 )
@@ -178,7 +180,7 @@ public class ProfileControllerTest {
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(flash().attribute("message", "User not found"));
 
-        verify(userService, times(0)).profileFormToUser(anyLong(), any());
+        verify(userService, times(0)).profileFormToUser(any(), any());
     }
 
 }
