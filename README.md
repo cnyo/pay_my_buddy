@@ -12,6 +12,8 @@ psql -h localhost -p 5432 -U postgres -f ./src/main/resources/init_database.sql
 psql -h localhost -p 5432 -U postgres -f ./src/main/resources/data.sql
 ```
 
+PAY_MY_BUDDY_DB_URL:jdbc:postgresql://localhost:5432/pay_my_buddy
+
 Vérification de l'initialisation
 ```
 psql -h localhost -p 5432 -U postgres -d pay_my_buddy -c "\dt"
