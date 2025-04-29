@@ -4,32 +4,32 @@
 <html lang="en">
 <head>
     <title>Registration</title>
-    <head th:replace="fragments/head"></head>
+    <head th:replace="~{fragments/head}"></head>
 </head>
 <body class="vh-100 d-flex justify-content-center align-items-center">
-<main class="d-flex justify-content-center">
-    <div>
-        <div class="d-flex flex-column mb-3">
-            <div th:replace="fragments/_flash_message.html :: section"></div>
+<main class="d-flex flex-column justify-content-center">
+    <div class="">
+        <div id="error-message" class="p-3 my-3 bg-warning text-dark" role="alert" th:if="${param.error}">
+            Nom d'utilisateur ou mot de passe invalide
+        </div>
+    </div>
+
+    <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" method="post" th:action="@{/registration}" th:object="${form}">
+        <h1 class="p-2 mx-auto mb-5 w-75 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
+
+        <div>
+            <label for="username_registration" class="visually-hidden">Username</label>
+            <input type="text" autocomplete="off" class="mb-3 form-control fw-bold text-secondary" id="username_registration" name="username_registration" placeholder="Username" th:field="*{username}" aria-describedby="" />
+            <label for="mail_registration" class="visually-hidden">Mail</label>
+            <input type="text" autocomplete="off" class="mb-3 form-control fw-bold text-secondary" id="mail_registration" name="mail_registration" placeholder="Mail" th:field="*{email}" aria-describedby="" />
+            <label for="password_registration" class="visually-hidden">Mot de passe</label>
+            <input type="password" autocomplete="off" class="form-control fw-bold text-secondary" id="password_registration" name="password_registration" placeholder="Mot de passe" th:field="*{password}" />
         </div>
 
-        <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" method="post" th:action="@{/registration}" th:object="${form}">
-            <h1 class="p-2 mx-auto mb-5 w-75 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
-
-            <div>
-                <label for="username" class="visually-hidden">Username</label>
-                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="username" name="username" placeholder="Username" autocomplete="username" th:field="*{username}" aria-describedby="error-message" />
-                <label for="mail" class="visually-hidden">Mail</label>
-                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="mail" name="mail" placeholder="Mail" autocomplete="mail" th:field="*{email}" aria-describedby="error-message" />
-                <label for="password" class="visually-hidden">Mot de passe</label>
-                <input type="password" class="form-control fw-bold text-secondary" id="password" name="password" placeholder="Mot de passe" th:field="*{password}" autocomplete="current-password" />
-            </div>
-
-            <div class="text-center">
-                <button type="submit" class="mx-auto mt-5 btn btn-primary">S'inscrire</button>
-            </div>
-        </form>
-    </div>
+        <div class="text-center">
+            <button type="submit" class="mx-auto mt-5 btn btn-primary">S'inscrire</button>
+        </div>
+    </form>
 </main>
 </body>
 </html>
