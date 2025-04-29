@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class AuthController {
     private final Logger log = LogManager.getLogger(AuthController.class);
 
-
     @GetMapping("/login")
     public String login() {
         log.info("Get login page");

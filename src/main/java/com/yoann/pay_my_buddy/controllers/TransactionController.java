@@ -47,7 +47,7 @@ public class TransactionController {
         model.addAttribute("relations", relations);
         model.addAttribute("transactions", dtoTransactions);
 
-        return "/transaction";
+        return "transaction";
     }
 
     @PostMapping("/transaction")
