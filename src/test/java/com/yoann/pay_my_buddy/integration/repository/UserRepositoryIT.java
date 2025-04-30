@@ -11,8 +11,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Date;
 import java.util.Optional;
@@ -21,8 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 @DataJpaTest
-@TestPropertySource(locations = "classpath:application-test.properties")
+@TestPropertySource(locations = "classpath:application.properties")
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@Sql(scripts = "/data-test.sql")
 public class UserRepositoryIT {
     @Autowired
     private UserRepository userRepository;
@@ -47,21 +48,21 @@ public class UserRepositoryIT {
 
     @Test
     public void givenUsername_whenFindByUsername_thenReturnUser() {
-        Optional<User> user = userRepository.findByUsername("jdoe");
+        Optional<User> user = userRepository.findByUsername("jtest");
 
         assertThat(user.isPresent()).isTrue();
     }
 
     @Test
     public void givenUsername_whenFindByUsername_thenReturnAnyUser() {
-        Optional<User> user = userRepository.findByUsername("jtest");
+        Optional<User> user = userRepository.findByUsername("noUser");
 
         assertThat(user.isPresent()).isFalse();
     }
 
     @Test
     public void givenEmail_whenFindByEmail_thenReturnUser() {
-        Optional<User> user = userRepository.findByEmail("jdoe@email.com");
+        Optional<User> user = userRepository.findByEmail("jtest@email.com");
 
         assertThat(user.isPresent()).isTrue();
     }
