@@ -47,17 +47,11 @@ public class RegistrationController {
             redirectAttributes.addFlashAttribute("message", "Registration success !");
             redirectAttributes.addFlashAttribute("user", user);
 
-            return "redirect:/login";
-        } catch (BadRegistrationDataException e) {
-            log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("messageType", "warning");
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            return "redirect:/login?registrationSuccess";
         } catch (Exception e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("messageType", "warning");
-            redirectAttributes.addFlashAttribute("message", "Registration error !");
+            return "redirect:/registration?error";
         }
 
-        return "redirect:/registration";
     }
 }

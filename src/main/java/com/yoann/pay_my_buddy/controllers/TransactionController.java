@@ -1,7 +1,7 @@
 package com.yoann.pay_my_buddy.controllers;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
-import com.yoann.pay_my_buddy.exception.UserTransactionException;
+import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.TransactionService;
@@ -14,11 +14,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -32,50 +31,69 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping("/")
-    public String transaction(Model model) {
+    @GetMapping("/transaction")
+    public String transaction(@AuthenticationPrincipal UserDetails user, Model model) {
         log.info("transaction view");
 
-        Iterable<Transaction> transactions = transactionService.getTransactions();
-        Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(transactions);
+        try {
+            User authUser = userService.getUserByEmail(user.getUsername());
+            Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(authUser.getSenderTransactions());
+            List<User> relations = userService.getConnectedUsersFromUser(authUser);
 
-        User user = userService.getUser(1L);
-        List<User> relations = userService.getConnectedUsersFromUser(user);
-
-        model.addAttribute("transaction", new Transaction());
-        model.addAttribute("user", user);
-        model.addAttribute("relations", relations);
-        model.addAttribute("transactions", dtoTransactions);
+            model.addAttribute("form", new TransactionForm());
+            model.addAttribute("relations", relations);
+            model.addAttribute("transactions", dtoTransactions);
+        } catch (NullPointerException e) {
+            log.error("User not found");
+            model.addAttribute("error", "Aucun utilisateur connecté trouvé");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            model.addAttribute("error", "User not found");
+        }
 
         return "transaction";
     }
 
     @PostMapping("/transaction")
-    public RedirectView saveTransaction(@Validated Transaction transaction, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
-        log.info("Post /transaction Create new transaction: {}", transaction.getReceiverUser() != null ? transaction.getReceiverUser().getId() : "aucun receiver");
-
-        if (errors.hasErrors()) {
-            log.error("Post /transaction errors in transaction");
-            return new RedirectView("/");
-        }
+    public String saveTransaction(
+            @Validated @ModelAttribute("form") TransactionForm form,
+            BindingResult errors,
+            Model model,
+            @AuthenticationPrincipal UserDetails user,
+            RedirectAttributes redirectAttributes
+    ) {
+        log.info("Post /transaction Create new transaction");
 
         try {
-            User authUser = userService.getUserByEmail(userDetails.getUsername());
-            transaction.setSenderUser(authUser);
+            if (errors.hasErrors()) {
+                log.error("Post /transaction errors in transaction");
+
+                User authUser = userService.getUserByEmail(user.getUsername());
+                Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(authUser.getSenderTransactions());
+                List<User> relations = userService.getConnectedUsersFromUser(authUser);
+
+                model.addAttribute("relations", relations);
+                model.addAttribute("transactions", dtoTransactions);
+
+                model.addAttribute("message", "Une erreur est survenue dans le formulaire");
+                model.addAttribute("message_type", "error");
+
+                return "transaction";
+            }
+
+            User authUser = userService.getUserByEmail(user.getUsername());
+            Transaction transaction = transactionService.initTransactionForAuthUser(form, authUser);
             transaction = transactionService.addTransaction(transaction);
 
             redirectAttributes.addFlashAttribute("receiver_username", transaction.getReceiverUser().getUsername());
-            redirectAttributes.addFlashAttribute("message", "success");
+            redirectAttributes.addFlashAttribute("message", "Transaction envoyée avec succès");
+            redirectAttributes.addFlashAttribute("message_type", "success");
 
             log.info("Transaction created");
-        } catch (UserTransactionException e) {
-            ControllerHelper.handleBusinessError(log, redirectAttributes, e);
         } catch (Exception e) {
-            log.error("technical error has occurred", e);
-            redirectAttributes.addFlashAttribute("error_message", "A technical error has occurred");
-            redirectAttributes.addFlashAttribute("message", "success");
+            ControllerHelper.handleBusinessError(log, redirectAttributes, e);
         }
 
-        return new RedirectView("/", true);
+        return "redirect:/transaction";
     }
 }

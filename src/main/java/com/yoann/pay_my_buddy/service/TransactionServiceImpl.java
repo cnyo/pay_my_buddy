@@ -4,8 +4,10 @@ import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
+import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
+import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 
 import org.apache.logging.log4j.LogManager;
@@ -74,5 +76,28 @@ public class TransactionServiceImpl implements TransactionService {
         log.debug("Mapped {} transactions to dto", dtoList.size());
 
         return dtoList;
+    }
+
+    public Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException {
+        log.debug("Call initTransaction");
+        Transaction transaction = new Transaction();
+        transaction.setDescription(form.getDescription());
+        transaction.setAmount(form.getAmountAsDouble());
+
+        if (form.getReceiverUserId() != null) {
+            transaction.setReceiverUser(new User().setId(form.getReceiverUserIdAsLong()));
+        } else {
+            log.error("Receiver user id is null");
+            throw new IllegalArgumentException("Receiver user id is null");
+        }
+
+        return attachSenderUser(transaction, authUser);
+    }
+
+    private Transaction attachSenderUser(Transaction transaction, User authUser) {
+        log.debug("Call attachSenderUser");
+        transaction.setSenderUser(authUser);
+
+        return transaction;
     }
 }

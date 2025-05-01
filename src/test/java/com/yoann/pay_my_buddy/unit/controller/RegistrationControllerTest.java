@@ -64,7 +64,7 @@ public class RegistrationControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/login"))
+                .andExpect(view().name("redirect:/login?registrationSuccess"))
                 .andExpect(flash().attributeExists("message"))
                 .andExpect(flash().attributeExists("messageType"))
                 .andExpect(flash().attribute("message", "Registration success !"))
@@ -83,10 +83,7 @@ public class RegistrationControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/registration"))
-                .andExpect(flash().attributeExists("message"))
-                .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("messageType", "warning"))
+                .andExpect(view().name("redirect:/registration?error"))
         ;
     }
 }

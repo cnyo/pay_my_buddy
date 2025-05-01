@@ -12,17 +12,17 @@
     <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-object="${transaction}">
         <input hidden="hidden" name="senderUser" th:field="*{senderUser}" value="${user.id}">
         <div class="col-md-4">
-            <select class="form-select" name="relations" id="relations" th:field="*{receiverUser}">
+            <select class="form-select" name="relations" id="relations" th:field="*{receiverUserId}" th:errors="*{receiverUserId}">
                 <option selected value="">Sélectionnez une relation</option>
                 <option data-th-each="u : ${relations}" data-th-value="${u?.id}" data-th-text="${u?.getUsername()}"></option>
             </select>
         </div>
         <div class="col-md-4">
-            <input class="form-control" name="Description" id="description" placeholder="description" aria-label="description" type="text" th:field="*{description}">
+            <input class="form-control" name="Description" id="description" placeholder="description" aria-label="description" type="text" th:field="*{description}" th:errors="*{description}">
         </div>
         <div class="col-md-2">
             <div class="input-group">
-                <input class="form-control" name="Montant" aria-label="montant" type="number" th:field="*{amount}" value="1">
+                <input class="form-control" name="Montant" aria-label="montant" type="number" th:field="*{amount}" th:errors="*{amount}" value="1">
                 <span class="input-group-text" id="basic-addon2">€</span>
             </div>
         </div>

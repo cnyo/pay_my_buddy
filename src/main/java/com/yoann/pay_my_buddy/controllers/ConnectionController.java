@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -33,7 +35,7 @@ public class ConnectionController {
     }
 
     @PostMapping("/relation")
-    public String addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, RedirectAttributes redirectAttributes) throws ConnectionUserException {
+    public String addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) throws ConnectionUserException {
         log.info("Post /relation Add connection with user by email");
 
         if (errors.hasErrors()) {
@@ -49,7 +51,7 @@ public class ConnectionController {
         }
 
         try {
-            User authUser = userService.getUser(1L);
+            User authUser = userService.getUserByEmail(userDetails.getUsername());
             User userToConnect = userService.getUserByEmail(form.getEmail());
             userService.addConnectionToUser(authUser, userToConnect);
             redirectAttributes.addFlashAttribute("success", "connection added successfully");

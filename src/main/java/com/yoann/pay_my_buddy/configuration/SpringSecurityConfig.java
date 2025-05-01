@@ -32,8 +32,8 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login", "/test", "/logout").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/registration").permitAll();
-                    auth.requestMatchers(HttpMethod.POST, "/registration").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/registration").anonymous();
+                    auth.requestMatchers(HttpMethod.POST, "/registration").anonymous();
                     auth.anyRequest().authenticated();
                 })
                 .logout(logout -> logout
@@ -44,7 +44,7 @@ public class SpringSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/transaction", true)
                         .permitAll()
                 )
                 .csrf(Customizer.withDefaults())

@@ -28,7 +28,7 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails user, Model model) throws UserNotFoundException {
         log.info("Get /profile");
-        User authUser = userService.getUserByEmail(user.getUsername());
+        User authUser = userService.getUserByUsername(user.getUsername());
         model.addAttribute("user", authUser);
         model.addAttribute("form", new ProfileForm(authUser.getUsername(), authUser.getEmail()));
 
@@ -36,21 +36,22 @@ public class ProfileController {
     }
 
     @PutMapping("/profile")
-    public String updateProfile(@Validated ProfileForm form, Errors error, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
+    public String updateProfile(@Validated ProfileForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
         log.info("Update /profile");
 
         try {
-            if (error.hasErrors()) {
+            if (errors.hasErrors()) {
                 throw new BadProfileDataException();
             }
 
-            User authUser = userService.getUserByEmail(userDetails.getUsername());
+            User authUser = userService.getUserByUsername(userDetails.getUsername());
             User updatedUser = userService.profileFormToUser(authUser, form);
             userService.updateUser(updatedUser);
             redirectAttributes.addFlashAttribute("message_type", "success");
             redirectAttributes.addFlashAttribute("message", "User updated successfully");
 
             log.info("Update /profile Update profile successfully");
+            return "redirect:/profile?success";
         } catch (NullPointerException e) {
             redirectAttributes.addFlashAttribute("message_type", "error");
             redirectAttributes.addFlashAttribute("message", "User not found");
@@ -61,6 +62,11 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("message", "Invalid username or email or password");
 
             log.error("Update /profile Update user faile because bad profile data");
+        } catch (UserNotFoundException e) {
+            redirectAttributes.addFlashAttribute("message_type", "error");
+            redirectAttributes.addFlashAttribute("message", "User not found");
+
+            log.error("Update /profile System error");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message_type", "error");
             redirectAttributes.addFlashAttribute("message", "System error");
