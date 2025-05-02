@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,28 +67,38 @@ public class UserServiceImplTest {
 
     @Test
     public void addConnectionUser_thenSuccess() throws ConnectionUserException {
-        User authUser = new User();
-        authUser.setId(1L);
-        User userToConnect = new User();
-        userToConnect.setId(2L);
+        // Arrange
+        User user1 = new User();
+        user1.setId(1L);
+        user1.setUsername("jtest");
+        user1.setEmail("jtest@email.com");
+        user1.setPassword("password");
 
-        ConnectionUser connectionUser = new ConnectionUser();
-        connectionUser.setUser(authUser);
-        connectionUser.setAssociatedUser(userToConnect);
-        authUser.addConnectionUser(connectionUser);
+        User user2 = new User();
+        user2.setId(2L);
+        user2.setUsername("wtest");
+        user2.setEmail("wtest@email.com");
+        user2.setPassword("password");
 
-        when(connectionUserFactory.createConnectionUser(authUser, userToConnect)).thenReturn(connectionUser);
-        when(userRepository.save(any())).thenReturn(authUser);
+        ConnectionUser connectionUser = new ConnectionUser(user1, user2, new Date());
 
-        User result = userService.addConnectionToUser(authUser, userToConnect);
+        when(connectionUserFactory.createConnectionUser(any(), any())).thenReturn(connectionUser);
+        when(userRepository.save(any())).thenReturn(user1);
 
+        // Act
+        User result = userService.addConnectionToUser(user1, user2);
+
+        // Assert
         assertThat(result).isNotNull();
         assertThat(result).isInstanceOf(User.class);
         assertThat(result.getConnections().size()).isEqualTo(1);
         assertThat(result.getConnections()).contains(connectionUser);
+        assertThat(result.getConnections().stream().findFirst().isPresent()).isTrue();
+        assertThat(result.getConnections().stream().findFirst().get().getUser()).isEqualTo(user1);
+        assertThat(result.getConnections().stream().findFirst().get().getAssociatedUser()).isEqualTo(user2);
 
-        verify(connectionUserFactory, times(1)).createConnectionUser(authUser, userToConnect);
-        verify(userRepository, times(1)).save(authUser);
+        verify(connectionUserFactory, times(1)).createConnectionUser(user1, user2);
+        verify(userRepository, times(1)).save(user1);
     }
 
     @Test

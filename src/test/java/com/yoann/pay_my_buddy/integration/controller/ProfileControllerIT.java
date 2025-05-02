@@ -14,8 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -61,7 +60,7 @@ public class ProfileControllerIT {
     @Test
     @WithMockUser(username = "jtest@email.com")
     public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
-        mockMvc.perform(put("/profile")
+        mockMvc.perform(post("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("username", "rtest")
@@ -78,7 +77,7 @@ public class ProfileControllerIT {
     @WithMockUser(username = "jtest@email.com")
     public void givenUnValidUserData_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
         // Act
-        ResultActions badUsernameResult = mockMvc.perform(put("/profile")
+        ResultActions badUsernameResult = mockMvc.perform(post("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("username", "a".repeat(251))
@@ -87,7 +86,7 @@ public class ProfileControllerIT {
                 )
                 .andDo(print());
 
-        ResultActions badEmailResult = mockMvc.perform(put("/profile")
+        ResultActions badEmailResult = mockMvc.perform(post("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("username", "johndoe")
@@ -96,7 +95,7 @@ public class ProfileControllerIT {
                 )
                 .andDo(print());
 
-        ResultActions emptyPasswordResult = mockMvc.perform(put("/profile")
+        ResultActions emptyPasswordResult = mockMvc.perform(post("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
                         .param("username", "johndoe")
@@ -109,19 +108,19 @@ public class ProfileControllerIT {
         badUsernameResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
                 .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attribute("message_type", "warning"))
                 .andExpect(flash().attributeExists("message"));
 
         badEmailResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
                 .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attribute("message_type", "warning"))
                 .andExpect(flash().attributeExists("message"));
 
         emptyPasswordResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
                 .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attribute("message_type", "warning"))
                 .andExpect(flash().attributeExists("message"));
 
     }
