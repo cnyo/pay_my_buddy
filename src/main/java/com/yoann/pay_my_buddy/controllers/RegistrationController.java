@@ -6,6 +6,8 @@ import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -43,13 +45,22 @@ public class RegistrationController {
             User user = userService.initUserFromRegistrationForm(form);
             user = userService.addUser(user);
 
-            redirectAttributes.addFlashAttribute("messageType", "success");
+            redirectAttributes.addFlashAttribute("message_type", "success");
             redirectAttributes.addFlashAttribute("message", "Registration success !");
             redirectAttributes.addFlashAttribute("user", user);
 
             return "redirect:/login?registrationSuccess";
+        } catch(DataIntegrityViolationException | ConstraintViolationException e) {
+            log.error("Cette utilisateur existe déjà : {}", form.getUsername());
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "Cette utilisateur existe déjà");
+
+            return "redirect:/registration?error";
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error during registration: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "Registration failed, please try again");
+
             return "redirect:/registration?error";
         }
 

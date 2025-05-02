@@ -9,9 +9,7 @@
 <body class="vh-100 d-flex justify-content-center align-items-center">
 <main class="d-flex flex-column justify-content-center">
     <div>
-        <div id="error-message" class="p-3 my-3 bg-warning text-dark" role="alert" th:if="${param.error}">
-            Nom d'utilisateur ou mot de passe invalide
-        </div>
+        <div th:replace="~{fragments/_flash_message}"></div>
     </div>
 
     <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" method="post" th:action="@{/registration}" th:object="${form}">

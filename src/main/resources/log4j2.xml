@@ -8,16 +8,16 @@
         <Console name="CONSOLE">
             <PatternLayout disableAnsi="false" pattern="%d{DEFAULT} [%t] %highlight{%-5level}{FATAL=red, ERROR=red, WARN=yellow, INFO=cyan, DEBUG=green, TRACE=blue} - %msg%n" />
         </Console>
-        <File name="ErrorFileAppender" fileName="error.log">
+        <File name="ErrorFileAppender" fileName="..//logs//pay_my_buddy///error.log">
             <PatternLayout pattern="%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n"/>
             <Filters>
                 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
         </File>
-        <File name="MAIN" fileName="C://temps//logs//p6///main.log">
+        <File name="MAIN" fileName="..//logs//pay_my_buddy///main.log">
             <PatternLayout disableAnsi="false" pattern="%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n" />
         </File>
-        <File name="payMyBuddy" fileName="C://temps//logs//p6///pay_my_buddy.log">
+        <File name="payMyBuddy" fileName="..//logs//pay_my_buddy///pay_my_buddy.log">
             <PatternLayout disableAnsi="false" pattern="%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n" />
         </File>
     </Appenders>

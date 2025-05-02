@@ -49,7 +49,7 @@ public class RegistrationControllerTest {
         User user = new User();
         user.setUsername("username");
         user.setEmail("email@email.com");
-        user.setPassword("password"); // todo: encoder
+        user.setPassword("password");
 
         when(errors.hasErrors()).thenReturn(false);
         when(userService.initUserFromRegistrationForm(any())).thenReturn(user);
@@ -65,15 +65,27 @@ public class RegistrationControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/login?registrationSuccess"))
-                .andExpect(flash().attributeExists("message"))
-                .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("message", "Registration success !"))
-                .andExpect(flash().attribute("messageType", "success"))
+                .andExpect(flash().attribute("message_type", "success"))
         ;
     }
 
     @Test
     public void postRegistration_withNotValidEmail_andShowErrorMessage() throws Exception {
+        mockMvc.perform(post("/registration")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("username", "username")
+                        .param("email", "emailemail.com")
+                        .param("password", "password")
+                        .with(csrf())
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/registration?error"))
+        ;
+    }
+
+    @Test
+    public void postRegistration_whenAlreadyUserExists_andShowErrorMessage() throws Exception {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", "username")

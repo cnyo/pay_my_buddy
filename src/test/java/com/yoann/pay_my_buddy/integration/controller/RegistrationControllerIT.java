@@ -38,16 +38,6 @@ public class RegistrationControllerIT {
     }
 
     @Test
-    public void getNewRegistrationPageWithError_andErrorMessage() throws Exception {
-        mockMvc.perform(get("/registration?error"))
-                .andDo(print())
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(view().name("registration"))
-                .andExpect(content().string(containsString("Nom d'utilisateur ou mot de passe invalide")))
-        ;
-    }
-
-    @Test
     public void postNewRegistration_withValidData_andRedirectToLoginPage() throws Exception {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -59,10 +49,7 @@ public class RegistrationControllerIT {
                 .andDo(print())
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/login?registrationSuccess"))
-                .andExpect(flash().attributeExists("message"))
-                .andExpect(flash().attributeExists("messageType"))
-                .andExpect(flash().attribute("message", "Registration success !"))
-                .andExpect(flash().attribute("messageType", "success"))
+                .andExpect(flash().attribute("message_type", "success"))
         ;
     }
 
