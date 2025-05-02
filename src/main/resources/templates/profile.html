@@ -9,15 +9,8 @@
 
 <div>
     <section>
-        <div>
-            <div id="error-message" class="p-3 my-3 bg-warning text-dark" role="alert" th:if="${param.success}">
-                Profil modifié avec succès !
-            </div>
-
+        <form class="w-25 mx-auto" method="post" action="#" th:action="@{/profile}" th:object="${form}">
             <div th:replace="~{fragments/_flash_message}"></div>
-        </div>
-
-        <form class="w-25 mx-auto" method="put" action="#" th:action="@{/profile}" th:object="${form}">
             <div class="mb-3 row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
                 <div class="col-sm-10">

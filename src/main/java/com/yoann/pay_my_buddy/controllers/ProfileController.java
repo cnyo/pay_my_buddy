@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,7 +36,7 @@ public class ProfileController {
         return "profile";
     }
 
-    @PutMapping("/profile")
+    @PostMapping("/profile")
     public String updateProfile(@Validated ProfileForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
         log.info("Update /profile");
 
@@ -53,28 +54,28 @@ public class ProfileController {
             log.info("Update /profile Update profile successfully");
             return "redirect:/profile?success";
         } catch (NullPointerException e) {
-            redirectAttributes.addFlashAttribute("message_type", "error");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "User not found");
 
             log.error("Update /profile User to update not found");
         } catch (BadProfileDataException e) {
-            redirectAttributes.addFlashAttribute("message_type", "error");
-            redirectAttributes.addFlashAttribute("message", "Invalid username or email or password");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "Invalid username, email or password");
 
             log.error("Update /profile Update user faile because bad profile data");
         } catch (UserNotFoundException e) {
-            redirectAttributes.addFlashAttribute("message_type", "error");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "User not found");
 
-            log.error("Update /profile System error");
+            log.error("Update /profile User not found");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message_type", "error");
+            redirectAttributes.addFlashAttribute("message_type", "danger");
             redirectAttributes.addFlashAttribute("message", "System error");
 
             log.error("Update /profile System error");
         }
 
-        log.info("Update /profile Redirect to /profile");
+        log.info("Update /profile Redirect to get /profile");
 
         return "redirect:/profile";
     }

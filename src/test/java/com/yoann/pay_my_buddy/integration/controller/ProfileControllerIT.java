@@ -96,6 +96,15 @@ public class ProfileControllerIT {
                 )
                 .andDo(print());
 
+        ResultActions emptyPasswordResult = mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "johndoe")
+                        .param("email", "johndoe@email.com")
+                        .param("password", "")
+                )
+                .andDo(print());
+
         // Assert
         badUsernameResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
@@ -108,5 +117,12 @@ public class ProfileControllerIT {
                 .andExpect(flash().attributeExists("message_type"))
                 .andExpect(flash().attribute("message_type", "error"))
                 .andExpect(flash().attributeExists("message"));
+
+        emptyPasswordResult.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile"))
+                .andExpect(flash().attributeExists("message_type"))
+                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attributeExists("message"));
+
     }
 }
