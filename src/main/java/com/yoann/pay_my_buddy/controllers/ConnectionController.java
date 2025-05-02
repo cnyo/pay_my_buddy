@@ -40,13 +40,15 @@ public class ConnectionController {
 
         if (errors.hasErrors()) {
             log.error("Post /relation {}", errors.getAllErrors());
-            redirectAttributes.addFlashAttribute("error", "Errors in relation");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "Form is invalid");
             return "redirect:/relation";
         }
 
         if (!ValidationUtils.emailIsValid(form.getEmail())) {
             log.error("Post /relation Email is invalid");
-            redirectAttributes.addFlashAttribute("error", "Email is invalid");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "Email is invalid");
             return "redirect:/relation";
         }
 
@@ -54,16 +56,20 @@ public class ConnectionController {
             User authUser = userService.getUserByEmail(userDetails.getUsername());
             User userToConnect = userService.getUserByEmail(form.getEmail());
             userService.addConnectionToUser(authUser, userToConnect);
-            redirectAttributes.addFlashAttribute("success", "connection added successfully");
+            redirectAttributes.addFlashAttribute("message_type", "success");
+            redirectAttributes.addFlashAttribute("message", "connection added successfully");
         } catch (UserNotFoundException e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("error", "User not found");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "User not found");
         } catch (ConnectionUserException e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("error", "handle connection failed");
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "handle connection failed");
         } catch (Exception e) {
             log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("error", "system error");
+            redirectAttributes.addFlashAttribute("message_type", "danger");
+            redirectAttributes.addFlashAttribute("message", "system error");
         }
 
         return "redirect:/relation";
