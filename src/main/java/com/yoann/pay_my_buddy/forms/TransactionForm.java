@@ -8,12 +8,10 @@ public class TransactionForm {
     @NotEmpty
     private String description;
 
-    @NotNull
     @Positive
     private String amount;
 
-    @NotNull
-    @Positive
+    @NotEmpty
     private String receiverUserId;
 
     public String getDescription() {
