@@ -6,10 +6,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,15 +21,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest
+@ActiveProfiles("test") // todo: utilité ?
 @AutoConfigureMockMvc
+@Sql(scripts = "/data-test.sql")
 public class ProfileControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser(username = "jdoe")
-    public void whenGetProfilePage_whenShowUserForm() throws Exception {
+    @WithMockUser(username = "jtest@email.com")
+    public void whenGetProfilePageJtest_whenShowUserForm() throws Exception {
         // Act
         ResultActions result = mockMvc.perform(get("/profile"))
                 .andDo(print());
@@ -35,40 +40,48 @@ public class ProfileControllerIT {
         result
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("profile"))
-                .andExpect(content().string(containsString("jdoe")))
-                .andExpect(content().string(containsString("jdoe@email.com")));
+                .andExpect(content().string(containsString("jtest")));
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
-    public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
+    @WithMockUser(username = "wtest@email.com")
+    public void whenGetProfilePageWtest_whenShowUserForm() throws Exception {
         // Act
-        ResultActions result = mockMvc.perform(put("/profile")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(csrf())
-                        .param("username", "jdoe")
-                        .param("email", "johndoe@email.com")
-                        .param("password", "password")
-                )
+        ResultActions result = mockMvc.perform(get("/profile"))
                 .andDo(print());
 
         // Assert
-        result.andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile"))
-                .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "success"))
-                .andExpect(flash().attributeExists("message"))
+        result
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("profile"))
+                .andExpect(content().string(not(containsString("jtest"))))
+                .andExpect(content().string(containsString("wtest@email.com")));
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
+        mockMvc.perform(put("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "rtest")
+                        .param("email", "rtest@email.com")
+                        .param("password", "password")
+                )
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profile?success"))
         ;
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void givenUnValidUserData_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
         // Act
         ResultActions badUsernameResult = mockMvc.perform(put("/profile")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .with(csrf())
-                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy")
+                        .param("username", "a".repeat(251))
                         .param("email", "johndoe@email.com")
                         .param("password", "password")
                 )

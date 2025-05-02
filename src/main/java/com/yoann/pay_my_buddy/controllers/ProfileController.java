@@ -28,7 +28,7 @@ public class ProfileController {
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails user, Model model) throws UserNotFoundException {
         log.info("Get /profile");
-        User authUser = userService.getUserByUsername(user.getUsername());
+        User authUser = userService.getUserByEmail(user.getUsername());
         model.addAttribute("user", authUser);
         model.addAttribute("form", new ProfileForm(authUser.getUsername(), authUser.getEmail()));
 
@@ -44,7 +44,7 @@ public class ProfileController {
                 throw new BadProfileDataException();
             }
 
-            User authUser = userService.getUserByUsername(userDetails.getUsername());
+            User authUser = userService.getUserByEmail(userDetails.getUsername());
             User updatedUser = userService.profileFormToUser(authUser, form);
             userService.updateUser(updatedUser);
             redirectAttributes.addFlashAttribute("message_type", "success");

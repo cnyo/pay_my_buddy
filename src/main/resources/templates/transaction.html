@@ -9,8 +9,9 @@
 
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <section class="mx-5">
-    <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-object="${transaction}">
-        <input hidden="hidden" name="senderUser" th:field="*{senderUser}" value="${user.id}">
+    <h2 th:if="${user}" th:text="${user.username}"></h2>
+
+    <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-object="${form}">
         <div class="col-md-4">
             <select class="form-select" name="relations" id="relations" th:field="*{receiverUserId}" th:errors="*{receiverUserId}">
                 <option selected value="">Sélectionnez une relation</option>

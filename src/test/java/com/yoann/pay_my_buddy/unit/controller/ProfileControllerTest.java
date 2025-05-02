@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {ProfileController.class})
+@WebMvcTest(ProfileController.class)
 @AutoConfigureMockMvc
 public class ProfileControllerTest {
 
@@ -39,12 +39,12 @@ public class ProfileControllerTest {
     private ArgumentCaptor<ProfileForm> formCaptor;
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void whenGetProfilePage_whenShowUserForm() throws Exception {
         // Arrange
         User authUser = new User();
-        authUser.setUsername("jdoe");
-        authUser.setEmail("jdoe@email.com");
+        authUser.setUsername("jtest");
+        authUser.setEmail("jtest@email.com");
         authUser.setPassword("password");
 
         when(userService.getUserByEmail(anyString())).thenReturn(authUser);
@@ -57,15 +57,13 @@ public class ProfileControllerTest {
         result
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("profile"))
-                .andExpect(content().string(containsString("jdoe")))
-                .andExpect(content().string(containsString("jdoe@email.com")));
+                .andExpect(content().string(containsString("jtest")))
+                .andExpect(content().string(containsString("jtest@email.com")));
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
-        // Test that the profile update redirects correctly with a success message
-
         // Arrange
         User authUser = new User();
         authUser.setId(1L);
@@ -84,7 +82,7 @@ public class ProfileControllerTest {
         updatedUser.setEmail(form.getEmail());
         updatedUser.setPassword(form.getPassword());
 
-        when(userService.getUserByUsername(anyString())).thenReturn(authUser);
+        when(userService.getUserByEmail(anyString())).thenReturn(authUser);
         when(userService.profileFormToUser(any(), any())).thenReturn(updatedUser);
         when(userService.updateUser(any())).thenReturn(updatedUser);
 
@@ -100,7 +98,7 @@ public class ProfileControllerTest {
 
         // Assert
         result.andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile"))
+                .andExpect(redirectedUrl("/profile?success"))
                 .andExpect(flash().attributeExists("message_type"))
                 .andExpect(flash().attribute("message_type", "success"))
                 .andExpect(flash().attributeExists("message"));
@@ -113,16 +111,14 @@ public class ProfileControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void givenUnValidUserData_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
-        // Test that the profile update with bad data redirects correctly with an error message
-
         // Act
         ResultActions badUsernameResult = mockMvc.perform(put("/profile")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             .with(csrf()
                         )
-                        .param("username", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyssssssssssssssssssssssssssssssssssssssssssssss")
+                        .param("username", "a".repeat(251))
                         .param("email", "johndoe@email.com")
                         .param("password", "password")
                 )
@@ -155,10 +151,8 @@ public class ProfileControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void givenNoneExistsUserId_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
-        // Test that the profile update with none exists user redirects correctly with an error message
-
         // Arrange
         when(userService.getUserByEmail(anyString())).thenThrow(NullPointerException.class);
 
