@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.controllers;
 
 import com.yoann.pay_my_buddy.exception.ConnectionUserException;
+import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.forms.ConnectionUserForm;
 import com.yoann.pay_my_buddy.model.User;
@@ -58,18 +59,28 @@ public class ConnectionController {
             userService.addConnectionToUser(authUser, userToConnect);
             redirectAttributes.addFlashAttribute("message_type", "success");
             redirectAttributes.addFlashAttribute("message", "connection added successfully");
+
+            log.info("Post /relation add connection success");
         } catch (UserNotFoundException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "User not found");
+            log.error("Post /relation {}", "User not found");
+        } catch (UserAlreadyConnectedException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("message_type", "warning");
+            redirectAttributes.addFlashAttribute("message", "User already connected");
+            log.error("Post /relation {}","User already connected");
         } catch (ConnectionUserException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "handle connection failed");
+            log.error("Post /relation {}", "handle connection failed");
         } catch (Exception e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("message_type", "danger");
             redirectAttributes.addFlashAttribute("message", "system error");
+            log.error("Post /relation {}","system error");
         }
 
         return "redirect:/relation";

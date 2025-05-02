@@ -1,5 +1,7 @@
 package com.yoann.pay_my_buddy.integration.controller;
 
+import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
+import com.yoann.pay_my_buddy.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,8 +11,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,7 +53,7 @@ public class ConnectionControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/relation"))
-                .andExpect(flash().attribute("success", "connection added successfully"))
+                .andExpect(flash().attribute("message", "connection added successfully"))
         ;
     }
 
@@ -62,7 +68,7 @@ public class ConnectionControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/relation"))
-                .andExpect(flash().attribute("error", "User not found"))
+                .andExpect(flash().attribute("message", "User not found"))
         ;
     }
 
@@ -77,7 +83,7 @@ public class ConnectionControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/relation"))
-                .andExpect(flash().attribute("error", "User not found"));
+                .andExpect(flash().attribute("message", "User not found"));
     }
 
     @Test
@@ -91,6 +97,24 @@ public class ConnectionControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/relation"))
-                .andExpect(flash().attribute("error", "Email is invalid"));
+                .andExpect(flash().attribute("message", "Email is invalid"));
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void whenPostConnection_whenUserAlreadyConnected_thenRedirectWithErrorMessage() throws Exception {
+        // Act
+        ResultActions result = mockMvc.perform(post("/relation")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "dtest@email.com")
+                )
+                .andDo(print());
+
+        // Assert
+        result
+                .andExpect(redirectedUrl("/relation"))
+                .andExpect(status().isFound())
+                .andExpect(flash().attribute("message", "User already connected"));
     }
 }

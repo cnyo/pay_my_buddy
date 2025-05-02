@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.unit.controller;
 
 import com.yoann.pay_my_buddy.controllers.ConnectionController;
+import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -68,8 +70,7 @@ public class ConnectionControllerTest {
             .andDo(print())
             .andExpect(redirectedUrl("/relation"))
             .andExpect(status().isFound())
-            .andExpect(flash().attributeCount(1))
-            .andExpect(flash().attribute("success", "connection added successfully"))
+            .andExpect(flash().attribute("message", "connection added successfully"))
             ;
     }
 
@@ -88,8 +89,7 @@ public class ConnectionControllerTest {
                 .andDo(print())
                 .andExpect(redirectedUrl("/relation"))
                 .andExpect(status().isFound())
-                .andExpect(flash().attributeCount(1))
-                .andExpect(flash().attribute("error", "User not found"))
+                .andExpect(flash().attribute("message", "User not found"))
         ;
 
         verify(userService, times(1)).getUserByEmail(anyString());
@@ -108,12 +108,41 @@ public class ConnectionControllerTest {
                 .andDo(print())
                 .andExpect(redirectedUrl("/relation"))
                 .andExpect(status().isFound())
-                .andExpect(flash().attributeCount(1))
-                .andExpect(flash().attributeExists("error"))
-                .andExpect(flash().attribute("error", anyOf(
+                .andExpect(flash().attribute("message", anyOf(
                         equalTo("Errors in relation"),
-                        equalTo("Email is invalid")
+                        equalTo("Email is invalid"),
+                        equalTo("Form is invalid")
                 )))
         ;
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void whenPostConnection_whenUserAlreadyConnected_thenRedirectWithErrorMessage() throws Exception {
+        // Arrange
+        User authUser = new User();
+        authUser.setUsername("authUser");
+        authUser.setEmail("authuser@email.com");
+        authUser.setPassword("password");
+
+        when(userService.getUserByEmail(anyString())).thenReturn(authUser);
+        when(userService.addConnectionToUser(any(), any())).thenThrow(UserAlreadyConnectedException.class);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/relation")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "dtest@email.com")
+                )
+                .andDo(print());
+
+        // Assert
+         result
+                 .andExpect(redirectedUrl("/relation"))
+                 .andExpect(status().isFound())
+                 .andExpect(flash().attribute("message", "User already connected"));
+
+        verify(userService, times(2)).getUserByEmail(anyString());
+        verify(userService, times(1)).addConnectionToUser(any(), any());
     }
 }
