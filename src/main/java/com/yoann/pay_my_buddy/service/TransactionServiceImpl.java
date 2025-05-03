@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Service implementation for handling transactions.
+ */
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger log = LogManager.getLogger(TransactionServiceImpl.class);
@@ -29,12 +32,25 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private TransactionMapper transactionMapper;
 
+    /**
+     * Retrieves all transactions from the database.
+     *
+     * @return an {@link Iterable} of all {@link Transaction} entities.
+     */
     @Override
     public Iterable<Transaction> getTransactions() {
         log.debug("Call getTransactions");
         return transactionRepository.findAll();
     }
 
+    /**
+     * Adds a new transaction after validating the provided data.
+     *
+     * @param transaction the {@link Transaction} to be added.
+     * @return the saved {@link Transaction} entity.
+     * @throws UserTransactionException if the transaction or its users are invalid.
+     * @throws IllegalArgumentException if arguments are not valid.
+     */
     @Override
     public Transaction addTransaction(Transaction transaction) throws UserTransactionException, IllegalArgumentException {
         if (transaction == null) {
@@ -64,6 +80,12 @@ public class TransactionServiceImpl implements TransactionService {
         return insertedTransaction;
     }
 
+    /**
+     * Converts a list of {@link Transaction} entities to a list of {@link TransactionDto}.
+     *
+     * @param transactions the transactions to map.
+     * @return a list of mapped {@link TransactionDto}.
+     */
     @Override
     public List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions) {
         log.debug("Call mapToDtoList");
@@ -78,6 +100,15 @@ public class TransactionServiceImpl implements TransactionService {
         return dtoList;
     }
 
+    /**
+     * Initializes a {@link Transaction} from a form and the authenticated user.
+     *
+     * @param form     the submitted {@link TransactionForm}.
+     * @param authUser the authenticated {@link User} who initiates the transaction.
+     * @return a partially built {@link Transaction} entity.
+     * @throws IllegalArgumentException if the receiver user ID is null.
+     */
+    @Override
     public Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException {
         log.debug("Call initTransaction");
         Transaction transaction = new Transaction();
@@ -94,7 +125,15 @@ public class TransactionServiceImpl implements TransactionService {
         return attachSenderUser(transaction, authUser);
     }
 
-    private Transaction attachSenderUser(Transaction transaction, User authUser) {
+    /**
+     * Sets the sender user of a {@link Transaction}.
+     *
+     * @param transaction the transaction to update.
+     * @param authUser    the authenticated user to set as sender.
+     * @return the updated {@link Transaction}.
+     */
+    @Override
+    public Transaction attachSenderUser(Transaction transaction, User authUser) {
         log.debug("Call attachSenderUser");
         transaction.setSenderUser(authUser);
 

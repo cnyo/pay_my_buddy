@@ -5,7 +5,6 @@ import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
-import com.yoann.pay_my_buddy.service.ConnectionUserServiceImpl;
 import com.yoann.pay_my_buddy.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,11 +38,8 @@ public class ConnectionControllerTest {
     @MockitoBean
     private UserServiceImpl userService;
 
-    @MockitoBean
-    private ConnectionUserServiceImpl connectionUserService;
-
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void whenPostAddConnection_thenRedirectWithSuccessMessage() throws Exception {
         String email = "test@test.com";
         User user = new User();
@@ -58,7 +54,6 @@ public class ConnectionControllerTest {
         connectionUser.setAssociatedUser(user);
 
         when(userService.getUserByEmail(anyString())).thenReturn(user);
-        when(connectionUserService.newConnectionWithUser(any())).thenReturn(connectionUser);
         when(userService.attachConnectionToUser(any(), any())).thenReturn(currentUser);
         when(userService.updateUser(any())).thenReturn(user);
 
@@ -75,7 +70,7 @@ public class ConnectionControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void whenPostAddConnectionNotExistsUser_thenRedirectWithNotFoundException() throws Exception {
         String email = "test@test.com";
 
@@ -98,7 +93,7 @@ public class ConnectionControllerTest {
 
     @ParameterizedTest()
     @ValueSource(strings = {"", " ", "bad-email"})
-    @WithMockUser(username = "jdoe")
+    @WithMockUser(username = "jtest@email.com")
     public void whenPostAddConnection_withBadEmail_thenRedirectedWithError(String email) throws Exception {
         mockMvc.perform(post("/relation")
                         .with(csrf())
