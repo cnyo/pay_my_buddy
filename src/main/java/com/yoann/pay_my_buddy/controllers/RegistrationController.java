@@ -16,16 +16,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller responsible for handling user registration.
+ */
 @Controller
 public class RegistrationController {
     private final Logger log = LogManager.getLogger(RegistrationController.class);
 
     private final UserService userService;
 
+    /**
+     * Constructor for the RegistrationController.
+     *
+     * @param userService the user service used for managing user data.
+     */
     public RegistrationController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Displays the registration form to the user.
+     *
+     * @param model the Spring model used to pass data to the view.
+     * @return the name of the Thymeleaf view for registration.
+     */
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("form", new RegistrationForm());
@@ -33,6 +47,14 @@ public class RegistrationController {
         return "registration";
     }
 
+    /**
+     * Handles the registration form submission.
+     *
+     * @param form the registration form data.
+     * @param errors validation errors encountered during form submission.
+     * @param redirectAttributes attributes used to pass flash messages between redirects.
+     * @return the view name to be rendered, either a success or error page.
+     */
     @PostMapping("/registration")
     public String saveRegistration(@Validated RegistrationForm form, Errors errors, RedirectAttributes redirectAttributes) {
 

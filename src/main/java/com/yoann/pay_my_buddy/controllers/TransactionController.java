@@ -21,6 +21,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+/**
+ * Controller for managing transactions between users.
+ */
 @Controller
 public class TransactionController {
     private final Logger log = LogManager.getLogger(TransactionController.class);
@@ -31,6 +34,13 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
+    /**
+     * Displays the transaction page for the authenticated user.
+     *
+     * @param user the currently authenticated user.
+     * @param model the Spring model used to pass data to the view.
+     * @return the name of the Thymeleaf view for transactions.
+     */
     @GetMapping("/transaction")
     public String transaction(@AuthenticationPrincipal UserDetails user, Model model) {
         log.info("transaction view");
@@ -54,6 +64,16 @@ public class TransactionController {
         return "transaction";
     }
 
+    /**
+     * Processes the creation of a new transaction.
+     *
+     * @param form the form data for the transaction.
+     * @param errors validation errors encountered during the form submission.
+     * @param model the Spring model used to inject data in case of error.
+     * @param user the currently authenticated user.
+     * @param redirectAttributes attributes used to pass flash messages between redirects.
+     * @return the view name to be rendered after transaction processing, either success or error.
+     */
     @PostMapping("/transaction")
     public String saveTransaction(
             @Validated @ModelAttribute("form") TransactionForm form,

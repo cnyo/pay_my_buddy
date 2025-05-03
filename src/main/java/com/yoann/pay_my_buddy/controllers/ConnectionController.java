@@ -20,6 +20,9 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller responsible for managing user connections (friend relations).
+ */
 @Controller
 public class ConnectionController {
 
@@ -28,6 +31,14 @@ public class ConnectionController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Displays the relation page where the user can add a connection.
+     *
+     * @param request the HTTP request
+     * @param model the Spring model
+     * @param flashAttribute the flash attribute from previous requests
+     * @return the relation view name
+     */
     @GetMapping("/relation")
     public String relation(HttpServletRequest request, Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
         model.addAttribute("user", new User());
@@ -35,6 +46,16 @@ public class ConnectionController {
         return "relation";
     }
 
+    /**
+     * Handles form submission for adding a new user connection.
+     *
+     * @param form the submitted form with email
+     * @param errors form validation errors
+     * @param userDetails the authenticated user
+     * @param redirectAttributes attributes for redirect messages
+     * @return redirect to the relation page
+     * @throws ConnectionUserException if a technical problem occurs during the connection process
+     */
     @PostMapping("/relation")
     public String addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) throws ConnectionUserException {
         log.info("Post /relation Add connection with user by email");

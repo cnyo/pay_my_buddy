@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controller responsible for displaying and updating the user profile.
+ */
 @Controller
 public class ProfileController {
     private final Logger log = LogManager.getLogger(ProfileController.class);
@@ -26,6 +29,14 @@ public class ProfileController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Displays the profile page with the current user's information.
+     *
+     * @param user the authenticated user
+     * @param model the Spring model
+     * @return the profile view
+     * @throws UserNotFoundException if the user is not found in the database
+     */
     @GetMapping("/profile")
     public String profile(@AuthenticationPrincipal UserDetails user, Model model) throws UserNotFoundException {
         log.info("Get /profile");
@@ -36,6 +47,15 @@ public class ProfileController {
         return "profile";
     }
 
+    /**
+     * Updates the user profile based on the submitted form.
+     *
+     * @param form the profile form
+     * @param errors validation errors
+     * @param userDetails the authenticated user
+     * @param redirectAttributes attributes for redirect messages
+     * @return redirect to the profile page
+     */
     @PostMapping("/profile")
     public String updateProfile(@Validated ProfileForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
         log.info("Update /profile");

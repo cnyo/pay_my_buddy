@@ -5,10 +5,18 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controller responsible for authentication-related endpoints.
+ */
 @Controller
 public class AuthController {
     private final Logger log = LogManager.getLogger(AuthController.class);
 
+    /**
+     * Displays the login page.
+     *
+     * @return the name of the login view
+     */
     @GetMapping("/login")
     public String login() {
         log.info("Get login page");
