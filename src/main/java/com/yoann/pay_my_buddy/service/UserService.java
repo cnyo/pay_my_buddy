@@ -6,6 +6,7 @@ import com.yoann.pay_my_buddy.forms.RegistrationForm;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 

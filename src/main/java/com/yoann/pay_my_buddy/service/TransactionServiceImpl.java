@@ -10,6 +10,7 @@ import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Service implementation for handling transactions.
+ * Service implementation for managing user transactions within the application.
+ * Provides functionality to retrieve, create, and map transactions, while validating business rules.
  */
+@Transactional
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger log = LogManager.getLogger(TransactionServiceImpl.class);
