@@ -3,7 +3,7 @@ package com.yoann.pay_my_buddy.forms;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-public class ProfileForm extends emailForm {
+public class ProfileForm extends EmailForm {
     @NotEmpty
     @Size(max = 250)
     private String username;
