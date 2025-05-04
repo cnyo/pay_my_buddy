@@ -3,7 +3,7 @@ package com.yoann.pay_my_buddy.controllers;
 import com.yoann.pay_my_buddy.exception.ConnectionUserException;
 import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
-import com.yoann.pay_my_buddy.forms.ConnectionUserForm;
+import com.yoann.pay_my_buddy.forms.EmailForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.utils.ValidationUtils;
@@ -57,7 +57,7 @@ public class ConnectionController {
      * @throws ConnectionUserException if a technical problem occurs during the connection process
      */
     @PostMapping("/relation")
-    public String addRelation(@Valid @ModelAttribute final ConnectionUserForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) throws ConnectionUserException {
+    public String addRelation(@Valid @ModelAttribute final EmailForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) throws ConnectionUserException {
         log.info("Post /relation Add connection with user by email");
 
         if (errors.hasErrors()) {

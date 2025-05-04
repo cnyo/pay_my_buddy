@@ -19,6 +19,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Spring Security configuration class that defines authentication, authorization,
+ * and password encoding for the application.
+ */
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
@@ -27,6 +31,14 @@ public class SpringSecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Defines the HTTP security rules, including access permissions, login/logout configurations,
+     * CSRF protection, and form login.
+     *
+     * @param http the {@link HttpSecurity} object to configure
+     * @return a configured {@link SecurityFilterChain}
+     * @throws Exception if a configuration error occurs
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -53,6 +65,11 @@ public class SpringSecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides an in-memory user store with default "user" and "admin" accounts for testing purposes.
+     *
+     * @return a {@link UserDetailsService} managing in-memory users
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
@@ -67,11 +84,24 @@ public class SpringSecurityConfig {
         return new InMemoryUserDetailsManager(user, admin);
     }
 
+    /**
+     * Defines the password encoder to use for encoding user passwords.
+     *
+     * @return a {@link BCryptPasswordEncoder} instance
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures the {@link AuthenticationManager} with the custom user details service and password encoder.
+     *
+     * @param http    the {@link HttpSecurity} instance
+     * @param encoder the {@link BCryptPasswordEncoder} to use for password encoding
+     * @return an {@link AuthenticationManager} instance
+     * @throws Exception if a configuration error occurs
+     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder encoder) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);

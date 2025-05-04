@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Custom implementation of {@link UserDetailsService} used by Spring Security to authenticate users
+ * based on their email and assign them a default role.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final String DEFAULT_ROLE = "USER";
@@ -26,6 +30,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Loads a user by their email address. If the user is not found, throws a {@link UsernameNotFoundException}.
+     *
+     * @param email the email of the user to load
+     * @return a {@link UserDetails} instance containing email, password, and authorities
+     * @throws UsernameNotFoundException if no user is found with the provided email
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         log.debug("Load user by email");
@@ -38,6 +49,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(), getGrantedAuthorities(DEFAULT_ROLE));
     }
 
+    /**
+     * Assigns a single authority role to the user.
+     *
+     * @param role the name of the role (e.g., "USER", "ADMIN")
+     * @return a list containing a single {@link GrantedAuthority}
+     */
     private List<GrantedAuthority> getGrantedAuthorities(String role) {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + role));

@@ -9,16 +9,23 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * Component responsible for mapping between {@link TransactionDto} and {@link Transaction} entities.
+ * This mapper helps to decouple the domain layer from the presentation layer by converting data
+ * back and forth between different object models.
+ */
 @Component
 public class TransactionMapper {
     private final Logger log = LogManager.getLogger(TransactionMapper.class);
 
     /**
-     * Converts a {@link TransactionDto} into a {@link Transaction} entity.
+     * Converts a {@link TransactionDto} object into a {@link Transaction} entity.
+     * Sets the amount, description, sender, receiver, and current timestamp.
      *
      * @param dto           the DTO containing transaction details (amount, description, etc.)
-     * @param receiverUser  the user who will receive the transaction
-     * @return              a new {@link Transaction} instance with the provided data and the current date
+     * @param senderUser    the user who sends the transaction
+     * @param receiverUser  the user who receives the transaction
+     * @return              a {@link Transaction} entity initialized with the provided data
      */
     public Transaction toEntity(TransactionDto dto, User senderUser, User receiverUser) {
         log.debug("Convert TransactionDto to Transaction: {}", dto);
@@ -33,6 +40,13 @@ public class TransactionMapper {
         return transaction;
     }
 
+    /**
+     * Converts a {@link Transaction} entity into a {@link TransactionDto} object.
+     * Useful for transferring data to the client or UI layers.
+     *
+     * @param transaction   the transaction entity to convert
+     * @return              a {@link TransactionDto} representing the transaction data
+     */
     public TransactionDto toDto(Transaction transaction) {
         log.debug("Convert Transaction to TransactionDto");
 

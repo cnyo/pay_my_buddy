@@ -1,7 +1,6 @@
 package com.yoann.pay_my_buddy.forms;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class TransactionForm {
