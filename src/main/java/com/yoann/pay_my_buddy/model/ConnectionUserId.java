@@ -7,12 +7,12 @@ import java.util.Objects;
 
 @Embeddable
 public class ConnectionUserId implements Serializable {
-    private Long userId;
-    private Long associatedUserId;
+    private Long userId1;
+    private Long userId2;
 
-    public ConnectionUserId(Long userId, Long associatedUserId) {
-        this.userId = userId;
-        this.associatedUserId = associatedUserId;
+    public ConnectionUserId(Long userId1, Long userId2) {
+        this.userId1 = userId1;
+        this.userId2 = userId2;
     }
 
     public ConnectionUserId() { }
@@ -21,29 +21,29 @@ public class ConnectionUserId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ConnectionUserId that)) return false;
-        return Objects.equals(userId, that.userId) &&
-                Objects.equals(associatedUserId, that.associatedUserId);
+        return Objects.equals(userId1, that.userId1) &&
+                Objects.equals(userId2, that.userId2);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, associatedUserId);
+        return Objects.hash(userId1, userId2);
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getUserId1() {
+        return userId1;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId1(Long userId) {
+        this.userId1 = userId;
     }
 
-    public Long getAssociatedUserId() {
-        return associatedUserId;
+    public Long getUserId2() {
+        return userId2;
     }
 
-    public void setAssociatedUserId(Long associatedUserId) {
-        this.associatedUserId = associatedUserId;
+    public void setUserId2(Long associatedUserId) {
+        this.userId2 = associatedUserId;
     }
 }
 

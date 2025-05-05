@@ -6,27 +6,28 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "connection_users")
 @IdClass(ConnectionUserId.class)
 public class ConnectionUser {
 
     @Id
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "user_id_1")
+    private Long userId1;
 
     @Id
-    @Column(name = "associated_user_id")
-    private Long associatedUserId;
+    @Column(name = "user_id_2")
+    private Long userId2;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
-    @MapsId("userId")
+    @JoinColumn(name = "user_id_1", nullable = false, insertable = false, updatable = false)
+    @MapsId("userId1")
     private User user;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "associated_user_id", insertable = false, updatable = false)
-    @MapsId("associatedUserId")
+    @JoinColumn(name = "user_id_2", insertable = false, updatable = false)
+    @MapsId("userId2")
     private User associatedUser;
 
     @JoinColumn(nullable = false)

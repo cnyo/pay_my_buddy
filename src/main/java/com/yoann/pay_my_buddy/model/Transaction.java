@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 import java.util.Date;
 
 @Entity
+@Table(name = "transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

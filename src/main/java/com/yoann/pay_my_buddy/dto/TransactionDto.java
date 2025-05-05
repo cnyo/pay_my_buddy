@@ -9,7 +9,6 @@ public class TransactionDto {
 
     private String description;
     private double amount;
-    private String amountCurrency;
     private Long senderUserId;
     private Long receiverUserId;
     private String receiverUsername;

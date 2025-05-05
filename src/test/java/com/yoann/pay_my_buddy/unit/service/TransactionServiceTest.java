@@ -4,6 +4,7 @@ import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
+import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
@@ -61,7 +62,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addTransactionTransaction_shouldSaveTransaction() throws UserTransactionException {
+    public void addTransaction_shouldSaveTransaction() throws UserTransactionException {
         User senderUser = new User();
         User receiverUser = new User();
 
@@ -78,6 +79,11 @@ public class TransactionServiceTest {
         verify(transactionRepository, times(1)).save(any(Transaction.class));
         assertThat(result).isInstanceOf(Transaction.class);
         assertThat(result.getAmount()).isEqualTo(2000.0);
+    }
+
+    @Test
+    public void addTransaction_whenTransactionIsNull_shouldReturnError() throws UserTransactionException {
+        assertThatThrownBy(()-> transactionService.addTransaction(null)).isInstanceOf(UserTransactionException.class);
     }
 
     @Test
@@ -148,5 +154,43 @@ public class TransactionServiceTest {
         assertThat(result.getFirst().getAmount()).isEqualTo(2000.0);
         assertThat(result.getFirst().getReceiverUsername()).isEqualTo("receiverUser");
         assertThat(result.getFirst().getDescription()).isEqualTo("Description");
+    }
+
+    @Test
+    public void givenTransactionFormAndAuthUser_whenInitTransaction_shouldReturnTransaction() {
+        // Arrange
+        TransactionForm transactionForm = new TransactionForm();
+        transactionForm.setDescription("Test");
+        transactionForm.setAmount("2000");
+        transactionForm.setReceiverUserId("2");
+
+        User authUser = new User();
+        authUser.setId(1L);
+        authUser.setUsername("authUser");
+
+        // Act
+        Transaction result = transactionService.initTransactionForAuthUser(transactionForm, authUser);
+
+        // Assert
+        assertThat(result).isInstanceOf(Transaction.class);
+        assertThat(result.getReceiverUser().getId()).isEqualTo(2L);
+        assertThat(result.getDescription()).isEqualTo("Test");
+        assertThat(result.getAmount()).isEqualTo(2000.0);
+        assertThat(result.getSenderUser()).isEqualTo(authUser);
+    }
+
+    @Test
+    public void givenTransactionFormAndAuthUser_whenInitTransactionWithEmptyReceiver_shouldReturnTransaction() {
+        // Arrange
+        TransactionForm transactionForm = new TransactionForm();
+        transactionForm.setDescription("Test");
+        transactionForm.setAmount("2000");
+
+        User authUser = new User();
+        authUser.setId(1L);
+        authUser.setUsername("authUser");
+
+        // Act && Assert
+        assertThatThrownBy(() -> transactionService.initTransactionForAuthUser(transactionForm, authUser)).isInstanceOf(IllegalArgumentException.class);
     }
 }
