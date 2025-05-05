@@ -1,3 +1,3 @@
-<div class="alert" th:class="'alert alert-'+${message_type}" role="alert" data-th-if="${message_type}">
-    <p class="m-0" data-th-text="${message}" data-th-if="${message}">Error message</p>
+<div class="alert" th:class="'alert alert-'+${message_type} ?: 'default'" role="alert" data-th-if="${message}">
+    <p class="m-0" data-th-text="${message}">Error message</p>
 </div>

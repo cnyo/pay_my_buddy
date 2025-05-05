@@ -5,8 +5,12 @@
     <title>Registration</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="custom.css" th:href="@{css/custom.css}" rel="stylesheet" media="screen"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+            crossorigin="anonymous"></script>
 </head>
 <body class="vh-100 d-flex justify-content-center align-items-center">
 <main class="d-flex flex-column justify-content-center">
@@ -14,18 +18,23 @@
         <div th:replace="~{fragments/_flash_message}"></div>
     </div>
 
-    <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" role="form" method="post" th:action="@{/registration}" th:object="${form}">
+    <form class="d-flex flex-column justify-content-between p-5 h-100 border border-dark" role="form" method="post"
+          th:action="@{/registration}" th:object="${form}">
         <h1 class="p-2 mx-auto mb-5 w-75 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
 
         <div>
             <label for="username_registration" class="visually-hidden">Username</label>
-            <input type="text" autocomplete="username" class="form-control fw-bold text-secondary" id="username_registration" name="username_registration" placeholder="Username" th:field="*{username}" aria-describedby="usernameHelp" />
-            <small id="usernameHelp">Doit contenir un nom de moin de 250 caractères.</small>
+            <input type="text" autocomplete="username" class="form-control fw-bold text-secondary"
+                   id="username_registration" name="username_registration" placeholder="Username" aria-label="Username"
+                   aria-required="true" th:field="*{username}"/>
             <label for="mail_registration" class="visually-hidden">Mail</label>
-            <input type="text" autocomplete="email" class="mt-3 form-control fw-bold text-secondary" id="mail_registration" name="mail_registration" placeholder="Mail" th:field="*{email}" aria-describedby="mailHelp" />
-            <small id="mailHelp">Doit contenir un email valide.</small>
+            <input type="text" autocomplete="email" class="mt-3 form-control fw-bold text-secondary"
+                   id="mail_registration" name="mail_registration" placeholder="Mail" th:field="*{email}"
+                   aria-label="Email" aria-required="true"/>
             <label for="password_registration" class="visually-hidden">Mot de passe</label>
-            <input type="password" autocomplete="new-password" class="mt-3 form-control fw-bold text-secondary" id="password_registration" name="password_registration" placeholder="Mot de passe" th:field="*{password}" />
+            <input type="password" autocomplete="new-password" class="mt-3 form-control fw-bold text-secondary"
+                   id="password_registration" name="password_registration" placeholder="Mot de passe"
+                   aria-label="Mot de passe" aria-required="true" th:field="*{password}"/>
         </div>
 
         <div class="text-center">

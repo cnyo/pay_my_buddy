@@ -5,39 +5,47 @@
     <title>Login</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="custom.css" th:href="@{css/custom.css}" rel="stylesheet" media="screen"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+            crossorigin="anonymous"></script>
 
 </head>
 <body class="vh-100 d-flex justify-content-center align-items-center">
 <main class="d-flex flex-column justify-content-center">
-        <div class="d-flex flex-column mb-3">
-            <div id="error-message" class="p-3 my-3 bg-warning text-dark" role="alert" th:if="${param.error}">
-                Nom d'utilisateur ou mot de passe invalide
-            </div>
-            <div class="p-3 mb-3 bg-success text-white" role="alert" th:if="${param.registrationSuccess}">
-                Nom d'utilisateur ou mot de passe invalide
-            </div>
-            <div class="p-3 mb-3 bg-success text-white" th:if="${param.logout}">
-                Déconnecté avec succès
-            </div>
+    <div class="d-flex flex-column mb-3">
+        <div id="error-message" class="p-3 my-3 bg-warning text-dark" role="alert" th:if="${param.error}">
+            Nom d'utilisateur ou mot de passe invalide
+        </div>
+        <div class="p-3 mb-3 bg-success text-white" role="alert" th:if="${param.registrationSuccess}">
+            Nom d'utilisateur ou mot de passe invalide
+        </div>
+        <div class="p-3 mb-3 bg-success text-white" role="alert" th:if="${param.logout}">
+            Déconnecté avec succès
+        </div>
+    </div>
+
+    <form class="d-flex flex-column justify-content-between p-5 border border-dark" th:action="@{/login}" method="post">
+        <h1 class="p-2 mx-auto mb-5 w-50 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
+
+        <div>
+            <label for="username" class="visually-hidden">Mail</label>
+            <input type="text" class="mb-3 form-control fw-bold text-secondary" id="username" name="username"
+                   placeholder="Mail" autocomplete="username" aria-label="Email" aria-required="true"
+                   aria-describedby="error-message"/>
+            <label for="password" class="visually-hidden">Mot de passe</label>
+            <input type="password" class="form-control fw-bold text-secondary" id="password" name="password"
+                   placeholder="Mot de passe" aria-label="Mot de passe"
+                   aria-required="true"/>
         </div>
 
-        <form class="d-flex flex-column justify-content-between p-5 border border-dark" th:action="@{/login}" method="post">
-            <h1 class="p-2 mx-auto mb-5 w-50 fs-6 bg-warning text-center rounded">Pay my buddy</h1>
-
-            <div>
-                <label for="username" class="visually-hidden">Mail</label>
-                <input type="text" class="mb-3 form-control fw-bold text-secondary" id="username" name="username" placeholder="Mail" autocomplete="username" aria-describedby="error-message" />
-                <label for="password" class="visually-hidden">Mot de passe</label>
-                <input type="password" class="form-control fw-bold text-secondary" id="password" name="password" placeholder="Mot de passe" autocomplete="current-password" />
-            </div>
-
-            <div class="text-center mt-5">
-                <button type="submit" class="mx-auto btn btn-primary">Se connecter</button>
-            </div>
-            <a class="mx-auto mt-3" href="#" th:href="@{/registration}">Créer un compte</a>
-        </form>
+        <div class="text-center mt-5">
+            <button type="submit" class="mx-auto btn btn-primary">Se connecter</button>
+        </div>
+        <a class="mx-auto mt-3" href="#" th:href="@{/registration}">Créer un compte</a>
+    </form>
 </main>
 </body>
 </html>

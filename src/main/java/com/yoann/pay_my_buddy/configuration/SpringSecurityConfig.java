@@ -43,7 +43,7 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login", "/test", "/logout").permitAll();
+                    auth.requestMatchers("/login", "/css/*", "/logout").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/registration").anonymous();
                     auth.requestMatchers(HttpMethod.POST, "/registration").anonymous();
                     auth.anyRequest().authenticated();

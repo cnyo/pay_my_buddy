@@ -1,6 +1,6 @@
-<nav class="m-5 navbar navbar-expand-lg">
+<nav class="m-5 navbar navbar-expand-lg" role="navigation" aria-label="Navigation principale">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#" th:href="@{/}">Pay My Buddy</a>
+        <a class="navbar-brand" href="#" th:href="@{/transaction}">Pay My Buddy</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -12,7 +12,7 @@
                 <li class="nav-item mr-6">
                     <form action="/logout" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <button class="nav-link" type="submit">Se déconnecter</button>
+                        <button class="btn btn-link nav-link" role="link" type="submit">Se déconnecter</button>
                     </form>
                 </li>
             </ul>
