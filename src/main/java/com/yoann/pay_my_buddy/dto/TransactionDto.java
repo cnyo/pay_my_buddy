@@ -2,8 +2,10 @@ package com.yoann.pay_my_buddy.dto;
 
 import com.yoann.pay_my_buddy.model.Transaction;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class TransactionDto {
-    private final String EURO = "€";
 
     private String description;
     private double amount;
@@ -15,7 +17,6 @@ public class TransactionDto {
     public TransactionDto(Transaction transaction) {
         this.description = transaction.getDescription();
         this.amount = transaction.getAmount();
-        this.amountCurrency = transaction.getAmount() + EURO;
         this.senderUserId = transaction.getSenderUser().getId();
         this.receiverUserId = transaction.getReceiverUser().getId();
         this.receiverUsername = transaction.getReceiverUser().getUsername();
@@ -65,10 +66,8 @@ public class TransactionDto {
     }
 
     public String getAmountCurrency() {
-        return amountCurrency;
-    }
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.FRANCE);
 
-    public void setAmountCurrency(String amountCurrency) {
-        this.amountCurrency = amountCurrency;
+        return formatter.format(amount);
     }
 }

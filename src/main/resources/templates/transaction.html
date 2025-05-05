@@ -51,13 +51,13 @@
         <tr>
             <th scope="col">Relations</th>
             <th scope="col">Description</th>
-            <th scope="col">Montant</th>
+            <th scope="col" class="text-end">Montant</th>
         </tr>
         </thead>
         <tr data-th-each="t : ${transactions}">
             <td data-th-text="${t?.receiverUsername}"></td>
             <td data-th-text="${t?.description}"></td>
-            <td data-th-text="${t?.amountCurrency}"></td>
+            <td class="text-end" data-th-text="${t?.amountCurrency}"></td>
         </tr>
     </table>
 </section>
