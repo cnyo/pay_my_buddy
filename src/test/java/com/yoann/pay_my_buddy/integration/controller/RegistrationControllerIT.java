@@ -66,7 +66,7 @@ public class RegistrationControllerIT {
 
         ResultActions resultWithBaUsername = mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("username", "a".repeat(251))
+                .param("username", "a".repeat(51))
                 .param("email", "email@mail.com")
                 .param("password", "password")
                 .with(csrf())

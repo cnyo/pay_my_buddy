@@ -118,7 +118,7 @@ public class ProfileControllerTest {
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                             .with(csrf()
                         )
-                        .param("username", "a".repeat(251))
+                        .param("username", "a".repeat(51))
                         .param("email", "johndoe@email.com")
                         .param("password", "password")
                 )
