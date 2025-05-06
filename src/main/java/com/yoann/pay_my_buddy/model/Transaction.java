@@ -92,4 +92,11 @@ public class Transaction {
         return this;
     }
 
+    public User getConnectedUser(User CurrentUser) {
+        if (CurrentUser.equals(this.senderUser)) {
+            return this.receiverUser;
+        } else {
+            return this.senderUser;
+        }
+    }
 }

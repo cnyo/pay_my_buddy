@@ -34,12 +34,15 @@ public interface TransactionService {
     Transaction addTransaction(Transaction transaction) throws UserTransactionException, BadRequestException;
 
     /**
-     * Converts a list of {@link Transaction} entities into a list of {@link TransactionDto}.
+     * Maps a collection of {@link Transaction} entities to a list of {@link TransactionDto} objects,
+     * using the authenticated user to contextualize each transaction.
      *
-     * @param transactions the transactions to convert.
-     * @return a list of corresponding {@link TransactionDto} instances.
+     * @param transactions an {@link Iterable} of transactions to convert; must not be {@code null}
+     * @param authUser the currently authenticated user, used to personalize each DTO
+     * @return a {@link List} of {@link TransactionDto} instances corresponding to the input transactions
+     * @throws IllegalArgumentException if {@code transactions} or {@code authUser} is {@code null}
      */
-    List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions);
+    List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions, User authUser);
 
     /**
      * Initializes a {@link Transaction} from a form and the authenticated user.
@@ -59,4 +62,6 @@ public interface TransactionService {
      * @return the updated {@link Transaction}.
      */
     Transaction attachSenderUser(Transaction transaction, User authUser);
+
+    List<Transaction> getAllTransactionsByUser(User user);
 }

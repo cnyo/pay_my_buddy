@@ -47,7 +47,8 @@ public class TransactionController {
 
         try {
             User authUser = userService.getUserByEmail(user.getUsername());
-            Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(authUser.getSenderTransactions());
+            List<Transaction> transactions = transactionService.getAllTransactionsByUser(authUser);
+            Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(transactions, authUser);
             List<User> relations = userService.getConnectedUsersFromUser(authUser);
 
             model.addAttribute("form", new TransactionForm());
@@ -89,7 +90,8 @@ public class TransactionController {
                 log.error("Post /transaction errors in transaction");
 
                 User authUser = userService.getUserByEmail(user.getUsername());
-                Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(authUser.getSenderTransactions());
+                List<Transaction> transactions = transactionService.getAllTransactionsByUser(authUser);
+                Iterable<TransactionDto> dtoTransactions = transactionService.mapTransactionsToDtoList(transactions, authUser);
                 List<User> relations = userService.getConnectedUsersFromUser(authUser);
 
                 model.addAttribute("relations", relations);

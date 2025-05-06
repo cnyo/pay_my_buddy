@@ -12,13 +12,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @TestPropertySource(locations = "classpath:application.properties")
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(scripts = "/data-test.sql")
 public class TransactionRepositoryIT {
 
@@ -91,5 +92,18 @@ public class TransactionRepositoryIT {
         assertThat(updatedTransaction.getId()).isNotNull();
         assertThat(updatedTransaction.getDescription()).isEqualTo("Another description updated.");
         assertThat(updatedTransaction.getId()).isEqualTo(insertedTransaction.getId());
+    }
+
+    @Test
+    public void givenUser_whenGetAllTransactionForHim_thenReturnTransactionList() {
+        User user = em.find(User.class, 1);
+
+        List<Transaction> transactions = transactionRepository.findAllByUser(user);
+
+        assertThat(transactions.size()).isEqualTo(1);
+        assertThat(
+                transactions.getFirst().getReceiverUser().getId().equals(user.getId()) ||
+                        transactions.getFirst().getSenderUser().getId().equals(user.getId())
+        ).isTrue();
     }
 }

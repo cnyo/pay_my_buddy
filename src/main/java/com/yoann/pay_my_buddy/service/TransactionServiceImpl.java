@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Service implementation for managing user transactions within the application.
@@ -84,21 +85,24 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Converts a list of {@link Transaction} entities to a list of {@link TransactionDto}.
+     * Maps a collection of {@link Transaction} entities to a list of {@link TransactionDto} objects,
+     * using the authenticated user to contextualize each transaction.
      *
-     * @param transactions the transactions to map.
-     * @return a list of mapped {@link TransactionDto}.
+     * @param transactions an {@link Iterable} of transactions to convert; must not be {@code null}
+     * @param authUser the currently authenticated user, used to personalize each DTO
+     * @return a {@link List} of {@link TransactionDto} instances corresponding to the input transactions
+     * @throws IllegalArgumentException if {@code transactions} or {@code authUser} is {@code null}
      */
     @Override
-    public List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions) {
+    public List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions, User authUser) {
         log.debug("Call mapToDtoList");
         List<TransactionDto> dtoList = new ArrayList<>();
 
         for (Transaction transaction : transactions) {
-            TransactionDto dto = transactionMapper.toDto(transaction);
+            TransactionDto dto = transactionMapper.toDto(transaction, authUser);
             dtoList.add(dto);
         }
-        log.debug("Mapped {} transactions to dto", dtoList.size());
+        log.debug("Mapped {} transaction(s) to dto", dtoList.size());
 
         return dtoList;
     }
@@ -141,5 +145,14 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setSenderUser(authUser);
 
         return transaction;
+    }
+
+    public List<Transaction> getAllTransactionsByUser(User user) throws NullPointerException {
+        log.debug("Call getAllTransactionsByUser");
+
+        Objects.requireNonNull(user, "user is null");
+        Objects.requireNonNull(user.getId(), "user id is null");
+
+        return transactionRepository.findAllByUser(user);
     }
 }

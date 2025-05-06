@@ -41,15 +41,17 @@ public class TransactionMapper {
     }
 
     /**
-     * Converts a {@link Transaction} entity into a {@link TransactionDto} object.
-     * Useful for transferring data to the client or UI layers.
+     * Converts a {@link Transaction} entity to a {@link TransactionDto}, using the authenticated user
+     * to determine the appropriate perspective (e.g., sender or receiver).
      *
-     * @param transaction   the transaction entity to convert
-     * @return              a {@link TransactionDto} representing the transaction data
+     * @param transaction the transaction entity to convert; must not be {@code null}
+     * @param authUser the currently authenticated user, used to contextualize the transaction
+     * @return the corresponding {@link TransactionDto}
+     * @throws IllegalArgumentException if {@code transaction} or {@code authUser} is {@code null}
      */
-    public TransactionDto toDto(Transaction transaction) {
+    public TransactionDto toDto(Transaction transaction, User authUser) {
         log.debug("Convert Transaction to TransactionDto");
 
-        return new TransactionDto(transaction);
+        return new TransactionDto(transaction, authUser);
     }
 }

@@ -29,22 +29,25 @@
                 <option data-th-each="u : ${relations}" data-th-value="${u?.id}"
                         data-th-text="${u?.getUsername()}"></option>
             </select>
-            <div class="text-bg-danger mt-1" id="relationHelp" th:if="${#fields.hasErrors('receiverUserId')}" th:errors="*{receiverUserId}"></div>
+            <div class="text-bg-danger mt-1 px-2 py-1" id="relationHelp" th:if="${#fields.hasErrors('receiverUserId')}"
+                 th:errors="*{receiverUserId}"></div>
         </div>
         <div class="col-md-4">
             <label for="description" class="visually-hidden">Description</label>
             <input class="form-control" name="Description" id="description" placeholder="description"
-                   aria-label="description" type="text" aria-describedby="descriptionHelp"  th:field="*{description}">
-            <div class="text-bg-danger mt-1" id="descriptionHelp" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                   aria-label="description" type="text" aria-describedby="descriptionHelp" th:field="*{description}">
+            <div class="text-bg-danger mt-1 px-2 py-1" id="descriptionHelp" th:if="${#fields.hasErrors('description')}"
+                 th:errors="*{description}"></div>
         </div>
         <div class="col-md-2">
             <div class="input-group">
                 <label for="montant" class="visually-hidden">Montant</label>
-                <input class="form-control" id="montant" name="Montant" type="number" aria-label="Montant"
-                       aria-required="true" aria-describedby="amountHelp"  th:field="*{amount}" value="1">
+                <input class="form-control" id="montant" name="Montant" type="number" step="0.01" aria-label="Montant"
+                       aria-required="true" aria-describedby="amountHelp" th:field="*{amount}" value="1">
                 <span class="input-group-text" id="basic-addon2">€</span>
             </div>
-            <div class="text-bg-danger mt-1" id="amountHelp" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></div>
+            <div class="text-bg-danger mt-1 px-2 py-1" id="amountHelp" th:if="${#fields.hasErrors('amount')}"
+                 th:errors="*{amount}"></div>
         </div>
         <button class="btn btn-primary col-md-2" type="submit">Payer</button>
     </form>
@@ -65,9 +68,12 @@
         </tr>
         </thead>
         <tr data-th-each="t : ${transactions}">
-            <td data-th-text="${t?.receiverUsername}"></td>
+            <td data-th-text="${t?.relationUsername}"></td>
             <td data-th-text="${t?.description}"></td>
-            <td class="text-end" data-th-text="${t?.amountCurrency}"></td>
+            <td class="text-end">
+                <strong class="p-1" th:classappend="${t?.isSender} ? 'text-bg-success' : 'text-bg-danger'"
+                        data-th-text="${t?.amountCurrency}">0.00 €</strong>
+            </td>
         </tr>
     </table>
 </section>

@@ -131,28 +131,34 @@ public class TransactionServiceTest {
 
     @Test
     public void mapTransactions_returnListOfTransactionDto() {
-        Transaction transaction1 = new Transaction();
-        Iterable<Transaction> transactions = List.of(transaction1);
-
+        // Arrange
         User senderUser = new User();
         senderUser.setUsername("sender");
 
         User receiverUser = new User();
         receiverUser.setUsername("receiverUser");
 
-        TransactionDto dto = new TransactionDto();
-        dto.setReceiverUsername("receiverUser");
-        dto.setAmount(2000.0);
-        dto.setDescription("Description");
+        Transaction transaction1 = new Transaction();
+        transaction1.setId(1L);
+        transaction1.setAmount(2000.00);
+        transaction1.setDescription("Description");
+        transaction1.setSenderUser(senderUser);
+        transaction1.setReceiverUser(receiverUser);
 
-        when(transactionMapper.toDto(any())).thenReturn(dto);
+        Iterable<Transaction> transactions = List.of(transaction1);
 
-        List<TransactionDto> result = transactionService.mapTransactionsToDtoList(transactions);
+        TransactionDto dto = new TransactionDto(transaction1, senderUser);
 
-        verify(transactionMapper, times(1)).toDto(any(Transaction.class));
+        when(transactionMapper.toDto(any(), any())).thenReturn(dto);
+
+        // Act
+        List<TransactionDto> result = transactionService.mapTransactionsToDtoList(transactions, senderUser);
+
+        // Assert
+        verify(transactionMapper, times(1)).toDto(any(Transaction.class), any(User.class));
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.getFirst().getAmount()).isEqualTo(2000.0);
-        assertThat(result.getFirst().getReceiverUsername()).isEqualTo("receiverUser");
+        assertThat(result.getFirst().getRelationUsername()).isEqualTo("receiverUser");
         assertThat(result.getFirst().getDescription()).isEqualTo("Description");
     }
 
@@ -192,5 +198,45 @@ public class TransactionServiceTest {
 
         // Act && Assert
         assertThatThrownBy(() -> transactionService.initTransactionForAuthUser(transactionForm, authUser)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void givenTransactionUser_whenGetAllTransactions_shouldReturnTransactions() {
+        // Arrange
+        User authUser = new User();
+        authUser.setId(1L);
+        authUser.setUsername("authUser");
+
+        User user = new User();
+        authUser.setId(2L);
+        authUser.setUsername("user");
+
+        Transaction transaction = new Transaction();
+        transaction.setId(1411L);
+        transaction.setSenderUser(authUser);
+        transaction.setReceiverUser(user);
+        transaction.setDescription("Test transaction");
+        transaction.setAmount(2000.58);
+
+        when(transactionRepository.findAllByUser(authUser)).thenReturn(List.of(transaction));
+
+        // Act
+        List<Transaction> transactions = transactionService.getAllTransactionsByUser(authUser);
+
+        // Assert
+        assertThat(transactions.size()).isEqualTo(1);
+        assertThat(transactions.getFirst().getAmount()).isEqualTo(2000.58);
+    }
+
+    @Test
+    public void givenTransactionUser_whenGetAllTransactionsWithoutUser_shouldReturnException() {
+        // Act && Assert
+        assertThatThrownBy(() -> transactionService.getAllTransactionsByUser(null)).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    public void givenTransactionUser_whenGetAllTransactionsWithUserWithoutId_shouldReturnException() {
+        // Act && Assert
+        assertThatThrownBy(() -> transactionService.getAllTransactionsByUser(new User())).isInstanceOf(NullPointerException.class);
     }
 }

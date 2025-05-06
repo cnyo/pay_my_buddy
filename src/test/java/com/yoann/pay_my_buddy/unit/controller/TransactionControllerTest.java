@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
@@ -76,12 +77,22 @@ public class TransactionControllerTest {
     @WithMockUser(username = "jtest@email.com")
     public void getTransactionPage_displaysAssociatedUsersAndForm() throws Exception {
         // Arrange
+        Transaction transaction = new Transaction();
+        transaction.setId(1411L);
+        transaction.setSenderUser(authUserMock);
+        transaction.setReceiverUser(receiverUserMock);
+        transaction.setDescription("Test transaction");
+        transaction.setAmount(2000.58);
+
         when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(receiverUserMock));
         when(userService.getUserByEmail(anyString())).thenReturn(authUserMock);
+        when(transactionService.getAllTransactionsByUser(any())).thenReturn(List.of(transaction));
 
-        // Act & Assert
-        mockMvc.perform(get("/transaction"))
-                .andDo(print())
+        // Act
+        ResultActions result = mockMvc.perform(get("/transaction"));
+
+        // Assert
+        result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("transaction"));
     }

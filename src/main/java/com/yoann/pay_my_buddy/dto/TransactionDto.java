@@ -1,24 +1,24 @@
 package com.yoann.pay_my_buddy.dto;
 
 import com.yoann.pay_my_buddy.model.Transaction;
+import com.yoann.pay_my_buddy.model.User;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
 public class TransactionDto {
+    private final NumberFormat NUMBER_FORMATTER = NumberFormat.getCurrencyInstance(Locale.FRANCE);
 
     private String description;
     private double amount;
-    private Long senderUserId;
-    private Long receiverUserId;
-    private String receiverUsername;
+    private boolean isSender;
+    private String relationUsername;
 
-    public TransactionDto(Transaction transaction) {
+    public TransactionDto(Transaction transaction, User authUser) {
         this.description = transaction.getDescription();
         this.amount = transaction.getAmount();
-        this.senderUserId = transaction.getSenderUser().getId();
-        this.receiverUserId = transaction.getReceiverUser().getId();
-        this.receiverUsername = transaction.getReceiverUser().getUsername();
+        this.isSender = transaction.getSenderUser().equals(authUser);
+        this.relationUsername = transaction.getConnectedUser(authUser).getUsername();
     }
 
     public TransactionDto() {
@@ -40,33 +40,24 @@ public class TransactionDto {
         this.amount = amount;
     }
 
-    public Long getSenderUserId() {
-        return senderUserId;
-    }
-
-    public void setSenderUserId(Long senderUserId) {
-        this.senderUserId = senderUserId;
-    }
-
-    public Long getReceiverUserId() {
-        return receiverUserId;
-    }
-
-    public void setReceiverUserId(Long receiverUserId) {
-        this.receiverUserId = receiverUserId;
-    }
-
-    public String getReceiverUsername() {
-        return receiverUsername;
-    }
-
-    public void setReceiverUsername(String receiverUsername) {
-        this.receiverUsername = receiverUsername;
-    }
-
     public String getAmountCurrency() {
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.FRANCE);
 
-        return formatter.format(amount);
+        return (isSender ? "" : "-") + NUMBER_FORMATTER.format(amount);
+    }
+
+    public boolean isSender() {
+        return isSender;
+    }
+
+    public void setSender(boolean sender) {
+        isSender = sender;
+    }
+
+    public String getRelationUsername() {
+        return relationUsername;
+    }
+
+    public void setRelationUsername(String relationUsername) {
+        this.relationUsername = relationUsername;
     }
 }

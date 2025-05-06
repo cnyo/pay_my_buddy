@@ -45,10 +45,10 @@ public class TransactionMapperTest {
         transaction.setDescription("Description");
         transaction.setDate(new Date());
 
-        TransactionDto result = transactionMapper.toDto(transaction);
+        TransactionDto result = transactionMapper.toDto(transaction, senderUser);
 
         assertThat(result).isInstanceOf(TransactionDto.class);
-        assertThat(result.getReceiverUsername()).isEqualTo("receiverUser");
+        assertThat(result.getRelationUsername()).isEqualTo("receiverUser");
         assertThat(result.getDescription()).isEqualTo("Description");
         assertThat(result.getAmount()).isEqualTo(2000.00);
     }
