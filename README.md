@@ -11,6 +11,11 @@ Initialisation de la base de données :
 psql -h localhost -p 5432 -U postgres -f ./src/main/resources/create_database.sql
 psql -h localhost -p 5432 -U postgres -d pay_my_buddy -f ./src/main/resources/data.sql
 psql -h localhost -p 5432 -U postgres -d pay_my_buddy -f ./src/main/resources/create_trigger_function_user_order.sql
+
+# Initialisation de la base de données de test
+psql -h localhost -p 5432 -U postgres -f ./src/test/resources/create_database_test.sql
+psql -h localhost -p 5432 -U postgres -d pay_my_buddy_test -f ./src/test/resources/data-test.sql
+psql -h localhost -p 5432 -U postgres -d pay_my_buddy_test -f ./src/main/resources/create_trigger_function_user_order.sql
 ```
 Vérification de l'initialisation
 ```

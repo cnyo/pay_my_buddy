@@ -1,2 +1,0 @@
-CREATE DATABASE pay_my_buddy_test;
--- \c pay_my_buddy

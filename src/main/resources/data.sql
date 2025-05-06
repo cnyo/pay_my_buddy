@@ -1,8 +1,8 @@
 -- This file is used to initialize the database with some data.
 
--- TRUNCATE TABLE transaction RESTART IDENTITY CASCADE;
+-- TRUNCATE TABLE transactions RESTART IDENTITY CASCADE;
 -- TRUNCATE TABLE connection_user RESTART IDENTITY CASCADE;
--- TRUNCATE TABLE "user" RESTART IDENTITY CASCADE;
+-- TRUNCATE TABLE "users" RESTART IDENTITY CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL NOT NULL PRIMARY KEY,
@@ -56,7 +56,8 @@ INSERT INTO "users" (username, email, password)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO connection_users (user_id_1, user_id_2, date)
-VALUES (1, 2, CURRENT_DATE) ON CONFLICT DO NOTHING;
+VALUES (1, 2, CURRENT_DATE)
+ON CONFLICT DO NOTHING;
 
 -- INSERT INTO transaction (sender_user_id, receiver_user_id, description, amount, date)
 -- VALUES (1, 2, 'Ma description', '2400.69', NOW()) ON CONFLICT DO NOTHING;
