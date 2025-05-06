@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public class RegistrationForm extends EmailForm {
     @NotEmpty
-    @Size(max = 250)
+    @Size(max = 50)
     private String username;
 
     @NotEmpty

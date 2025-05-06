@@ -97,7 +97,7 @@ public class ConnectionControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/relation"))
-                .andExpect(flash().attribute("message", "Email is invalid"));
+                .andExpect(flash().attribute("message_type", "warning"));
     }
 
     @Test

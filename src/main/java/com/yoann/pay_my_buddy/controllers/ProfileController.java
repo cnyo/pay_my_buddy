@@ -58,7 +58,7 @@ public class ProfileController {
      */
     @PostMapping("/profile")
     public String updateProfile(@Validated ProfileForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
-        log.info("Update /profile");
+        log.info("Post /profile");
 
         try {
             if (errors.hasErrors()) {
@@ -71,7 +71,7 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("message_type", "success");
             redirectAttributes.addFlashAttribute("message", "User updated successfully");
 
-            log.info("Update /profile Update profile successfully");
+            log.info("Post /profile Update profile successfully");
             return "redirect:/profile?success";
         } catch (NullPointerException e) {
             redirectAttributes.addFlashAttribute("message_type", "warning");

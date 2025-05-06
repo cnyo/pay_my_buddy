@@ -64,7 +64,7 @@ public class RegistrationControllerIT {
                 .with(csrf())
         );
 
-        ResultActions resultWithBaUsername = mockMvc.perform(post("/registration")
+        ResultActions resultWithBadUsername = mockMvc.perform(post("/registration")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("username", "a".repeat(51))
                 .param("email", "email@mail.com")
@@ -79,7 +79,7 @@ public class RegistrationControllerIT {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/registration?error"));
 
-        resultWithBaUsername
+        resultWithBadUsername
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/registration?error"));
