@@ -42,7 +42,7 @@ public class TransactionDto {
 
     public String getAmountCurrency() {
 
-        return (isSender ? "" : "-") + NUMBER_FORMATTER.format(amount);
+        return (isSender ? "+" : "-") + NUMBER_FORMATTER.format(amount);
     }
 
     public boolean isSender() {

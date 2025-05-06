@@ -20,10 +20,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConnectionUser> connections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "associatedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConnectionUser> associatedConnections = new ArrayList<>();
 
     @OneToMany(mappedBy = "senderUser")
@@ -77,7 +77,7 @@ public class User {
     }
 
     public User addConnectionUser(ConnectionUser connectionUser) {
-        if (connectionUser.getAssociatedUser() != null && connectionUser.getUser() != null) {
+        if (connectionUser.getUser2() != null && connectionUser.getUser1() != null) {
             connections.add(connectionUser);
         }
 
@@ -85,7 +85,7 @@ public class User {
     }
 
     public User addConnectedUser(ConnectionUser connectionUser) {
-        if (connectionUser.getAssociatedUser() != null && connectionUser.getUser() != null) {
+        if (connectionUser.getUser2() != null && connectionUser.getUser1() != null) {
             connections.add(connectionUser);
         }
 

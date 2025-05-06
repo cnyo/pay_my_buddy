@@ -9,6 +9,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
@@ -30,12 +31,14 @@ public class TransactionControllerIT {
     @Test
     @WithMockUser(username = "jtest@email.com")
     public void getTransactionPageForJtest_displaysAssociatedUsersAndForm() throws Exception {
-        mockMvc.perform(get("/transaction"))
-                .andDo(print())
+        // Act
+        ResultActions result = mockMvc.perform(get("/transaction"));
+
+        // Assert
+        result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("transaction"))
-                .andExpect(content().string(containsString("dtest")))
-        ;
+                .andExpect(content().string(containsString("dtest")));
     }
 
     @Test

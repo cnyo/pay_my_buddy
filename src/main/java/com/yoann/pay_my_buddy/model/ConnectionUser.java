@@ -22,13 +22,13 @@ public class ConnectionUser {
     @JsonIgnore
     @JoinColumn(name = "user_id_1", nullable = false, insertable = false, updatable = false)
     @MapsId("userId1")
-    private User user;
+    private User user1;
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "user_id_2", insertable = false, updatable = false)
     @MapsId("userId2")
-    private User associatedUser;
+    private User user2;
 
     @JoinColumn(nullable = false)
     private Date date;
@@ -36,8 +36,8 @@ public class ConnectionUser {
     public ConnectionUser() {}
 
     public ConnectionUser(User user, User associatedUser, Date date) {
-        this.user = user;
-        this.associatedUser = associatedUser;
+        this.user1 = user;
+        this.user2 = associatedUser;
         this.date = date;
     }
 
@@ -51,19 +51,19 @@ public class ConnectionUser {
         return this;
     }
 
-    public User getUser() {
-        return user;
+    public User getUser1() {
+        return user1;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser1(User user) {
+        this.user1 = user;
     }
 
-    public User getAssociatedUser() {
-        return associatedUser;
+    public User getUser2() {
+        return user2;
     }
 
-    public void setAssociatedUser(User associatedUser) {
-        this.associatedUser = associatedUser;
+    public void setUser2(User associatedUser) {
+        this.user2 = associatedUser;
     }
 }

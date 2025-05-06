@@ -24,8 +24,7 @@ import java.util.Optional;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final String DEFAULT_ROLE = "USER";
-
-    private final Logger log = LogManager.getLogger(TransactionController.class);
+    private final Logger log = LogManager.getLogger(CustomUserDetailsService.class);
 
     @Autowired
     private UserRepository userRepository;

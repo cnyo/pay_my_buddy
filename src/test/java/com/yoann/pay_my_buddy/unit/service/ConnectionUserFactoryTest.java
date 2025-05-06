@@ -34,8 +34,8 @@ public class ConnectionUserFactoryTest {
         ConnectionUser result = connectionUserFactory.createConnectionUser(currentUser, userToConnect);
 
         assertThat(result).isInstanceOf(ConnectionUser.class);
-        assertThat(result.getUser().getId()).isEqualTo(1L);
-        assertThat(result.getAssociatedUser().getId()).isEqualTo(2L);
+        assertThat(result.getUser1().getId()).isEqualTo(1L);
+        assertThat(result.getUser2().getId()).isEqualTo(2L);
         assertThat(result.getDate()).isNotNull().isInstanceOf(Date.class);
     }
 

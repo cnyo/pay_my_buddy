@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <title>Transaction</title>
     <meta charset="UTF-8">
@@ -17,7 +17,8 @@
 
 <nav th:replace="~{fragments/nav :: nav}"></nav>
 <section class="mx-5">
-    <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-object="${form}">
+    <div class="m-3" sec:authorize="isAuthenticated()">Bonjour <span sec:authentication="name"></span></div>
+    <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-if="${form}" data-th-object="${form}">
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
             Veuillez corriger les erreurs dans le formulaire.
         </div>
@@ -53,7 +54,7 @@
     </form>
 </section>
 
-<section class="m-5 p-3 border border-secondary-emphasis">
+<section class="m-5 p-3 border border-secondary-emphasis" data-th-if="${transactions}">
     <h2 class="fs-5">Mes transactions</h2>
     <div data-th-if="${transactions?.isEmpty()}">
         Aucune transaction en base de données

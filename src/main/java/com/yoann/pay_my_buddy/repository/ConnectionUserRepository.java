@@ -7,7 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConnectionUserRepository extends CrudRepository<ConnectionUser, Integer> {
-    Iterable<ConnectionUser> findByUser(User user);
-
-    Iterable<ConnectionUser> findByAssociatedUser(User user);
 }

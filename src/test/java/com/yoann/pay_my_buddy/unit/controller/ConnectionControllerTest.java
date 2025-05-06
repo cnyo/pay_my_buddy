@@ -50,8 +50,8 @@ public class ConnectionControllerTest {
         currentUser.setUsername("authUser");
 
         ConnectionUser connectionUser = new ConnectionUser();
-        connectionUser.setUser(user);
-        connectionUser.setAssociatedUser(user);
+        connectionUser.setUser1(user);
+        connectionUser.setUser2(user);
 
         when(userService.getUserByEmail(anyString())).thenReturn(user);
         when(userService.attachConnectionToUser(any(), any())).thenReturn(currentUser);

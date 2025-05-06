@@ -42,7 +42,7 @@ public class TransactionControllerTest {
     private TransactionService transactionService;
 
     private User authUserMock;
-    private User receiverUserMock;
+    private User connectedUserMock;
     private Transaction transactionMock;
     @Autowired
     private View error;
@@ -69,7 +69,7 @@ public class TransactionControllerTest {
         transaction.setAmount(2000.00);
 
         authUserMock = authUser;
-        receiverUserMock = receiverUser;
+        connectedUserMock = receiverUser;
         transactionMock = transaction;
     }
 
@@ -80,11 +80,11 @@ public class TransactionControllerTest {
         Transaction transaction = new Transaction();
         transaction.setId(1411L);
         transaction.setSenderUser(authUserMock);
-        transaction.setReceiverUser(receiverUserMock);
+        transaction.setReceiverUser(connectedUserMock);
         transaction.setDescription("Test transaction");
         transaction.setAmount(2000.58);
 
-        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(receiverUserMock));
+        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(connectedUserMock));
         when(userService.getUserByEmail(anyString())).thenReturn(authUserMock);
         when(transactionService.getAllTransactionsByUser(any())).thenReturn(List.of(transaction));
 
@@ -117,7 +117,7 @@ public class TransactionControllerTest {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/transaction"))
-                .andExpect(flash().attribute("receiver_username", receiverUserMock.getUsername()))
+                .andExpect(flash().attribute("receiver_username", connectedUserMock.getUsername()))
                 .andExpect(flash().attribute("message_type", "success"))
         ;
     }
@@ -126,7 +126,7 @@ public class TransactionControllerTest {
     @WithMockUser(username = "jtest@email.com")
     public void postFormTransaction_whenAmountIsNegative_thenRedirectedSuccess() throws Exception {
         // Arrange
-        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(receiverUserMock));
+        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(connectedUserMock));
         when(transactionService.initTransactionForAuthUser(any(), any())).thenReturn(transactionMock);
         when(transactionService.addTransaction(any())).thenReturn(transactionMock);
         when(userService.getUserByEmail(anyString())).thenReturn(authUserMock);
@@ -151,7 +151,7 @@ public class TransactionControllerTest {
     @WithMockUser(username = "jtest@email.com")
     public void postFormTransaction_whenReceiverUserIsEmpty_thenRedirectedSuccess() throws Exception {
         // Arrange
-        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(receiverUserMock));
+        when(userService.getConnectedUsersFromUser(any())).thenReturn(List.of(connectedUserMock));
         when(transactionService.initTransactionForAuthUser(any(), any())).thenReturn(transactionMock);
         when(transactionService.addTransaction(any())).thenReturn(transactionMock);
         when(userService.getUserByEmail(anyString())).thenReturn(authUserMock);

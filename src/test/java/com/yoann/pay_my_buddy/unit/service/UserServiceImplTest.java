@@ -94,8 +94,8 @@ public class UserServiceImplTest {
         assertThat(result.getConnections().size()).isEqualTo(1);
         assertThat(result.getConnections()).contains(connectionUser);
         assertThat(result.getConnections().stream().findFirst().isPresent()).isTrue();
-        assertThat(result.getConnections().stream().findFirst().get().getUser()).isEqualTo(user1);
-        assertThat(result.getConnections().stream().findFirst().get().getAssociatedUser()).isEqualTo(user2);
+        assertThat(result.getConnections().stream().findFirst().get().getUser1()).isEqualTo(user1);
+        assertThat(result.getConnections().stream().findFirst().get().getUser2()).isEqualTo(user2);
 
         verify(connectionUserFactory, times(1)).createConnectionUser(user1, user2);
         verify(userRepository, times(1)).save(user1);

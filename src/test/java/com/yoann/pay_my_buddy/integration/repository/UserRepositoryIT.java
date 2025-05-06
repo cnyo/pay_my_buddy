@@ -15,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -139,14 +140,14 @@ public class UserRepositoryIT {
         User updatedMainUser = userRepository.save(mainUser);
 
         Optional<ConnectionUser> optResult = mainUser.getConnections().stream().filter(
-                cu -> cu.getUser().getId().equals(1L) && cu.getAssociatedUser().equals(insertedAssociedUser)
+                cu -> cu.getUser1().getId().equals(1L) && cu.getUser2().equals(insertedAssociedUser)
         ).findFirst();
 
         assertThat(initialCountConnectionUsers).isEqualTo(1);
         assertThat(updatedMainUser.getConnections().size()).isEqualTo(2);
         assertThat(optResult.isPresent()).isTrue();
-        assertThat(optResult.get().getUser()).isEqualTo(updatedMainUser);
-        assertThat(optResult.get().getAssociatedUser()).isEqualTo(insertedAssociedUser);
+        assertThat(optResult.get().getUser1()).isEqualTo(updatedMainUser);
+        assertThat(optResult.get().getUser2()).isEqualTo(insertedAssociedUser);
     }
 
     @Test
@@ -205,6 +206,15 @@ public class UserRepositoryIT {
 
         assertThat(initialCountSenderTransactions).isEqualTo(1);
         assertThat(updatedSenderUser.getSenderTransactions().size()).isEqualTo(2);
+    }
+
+    @Test
+    public void givenAuthUser_whenGetHimRelation_thenSuccess() {
+        List<User> result = userRepository.getConnectedUsersFromUser(2L);
+
+        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.getFirst().getId()).isEqualTo(1L);
+        assertThat(result.getFirst().getId()).isNotEqualTo(2L);
     }
 
 }
