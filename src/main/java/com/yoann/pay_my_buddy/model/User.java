@@ -21,16 +21,16 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ConnectionUser> connections = new HashSet<>();
+    private List<ConnectionUser> connections = new ArrayList<>();
 
     @OneToMany(mappedBy = "associatedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ConnectionUser> associatedConnections = new HashSet<>();
+    private List<ConnectionUser> associatedConnections = new ArrayList<>();
 
     @OneToMany(mappedBy = "senderUser")
-    private Set<Transaction> senderTransactions = new HashSet<>();
+    private List<Transaction> senderTransactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiverUser")
-    private Set<Transaction> receiverTransactions = new HashSet<>();
+    private List<Transaction> receiverTransactions = new ArrayList<>();
 
     public User setId(Long id) {
         this.id = id;
@@ -72,7 +72,7 @@ public class User {
         return this;
     }
 
-    public Set<ConnectionUser> getConnections() {
+    public List<ConnectionUser> getConnections() {
         return connections;
     }
 
@@ -98,31 +98,31 @@ public class User {
         return this;
     }
 
-    public void setConnections(Set<ConnectionUser> connections) {
+    public void setConnections(List<ConnectionUser> connections) {
         this.connections = connections;
     }
 
-    public Set<ConnectionUser> getAssociatedConnections() {
+    public List<ConnectionUser> getAssociatedConnections() {
         return associatedConnections;
     }
 
-    public void setAssociatedConnections(Set<ConnectionUser> associatedConnections) {
+    public void setAssociatedConnections(List<ConnectionUser> associatedConnections) {
         this.associatedConnections = associatedConnections;
     }
 
-    public Set<Transaction> getSenderTransactions() {
+    public List<Transaction> getSenderTransactions() {
         return senderTransactions;
     }
 
-    public void setSenderTransactions(Set<Transaction> senderTransactions) {
+    public void setSenderTransactions(List<Transaction> senderTransactions) {
         this.senderTransactions = senderTransactions;
     }
 
-    public Set<Transaction> getReceiverTransactions() {
+    public List<Transaction> getReceiverTransactions() {
         return receiverTransactions;
     }
 
-    public void setReceiverTransactions(Set<Transaction> receiverTransactions) {
+    public void setReceiverTransactions(List<Transaction> receiverTransactions) {
         this.receiverTransactions = receiverTransactions;
     }
 
