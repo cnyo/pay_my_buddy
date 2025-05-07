@@ -55,32 +55,15 @@ public class SpringSecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .usernameParameter("email")
                         .defaultSuccessUrl("/transaction", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .csrf(Customizer.withDefaults())
         ;
 
         return http.build();
-    }
-
-    /**
-     * Provides an in-memory user store with default "user" and "admin" accounts for testing purposes.
-     *
-     * @return a {@link UserDetailsService} managing in-memory users
-     */
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("user"))
-                .roles("USER").build();
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("USER", "ADMIN").build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 
     /**
