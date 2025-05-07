@@ -13,6 +13,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,13 +98,17 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Updates user data based on a profile form.
+     * Updates a {@link User} entity using the data from a {@link ProfileForm}.
+     * <p>
+     * This method checks that both the user and the form are non-null, then updates the user's
+     * username, email, and password (if the new password is not blank and has changed).
+     * </p>
      *
-     * @param user the existing {@link User}.
-     * @param form the {@link ProfileForm} containing updated values.
-     * @return the updated {@link User}.
-     * @throws IllegalArgumentException if the user is null.
-     * @throws NullPointerException if the form is null.
+     * @param user the existing user entity to be updated
+     * @param form the profile form containing new data
+     * @return the updated user entity
+     * @throws IllegalArgumentException if the user is {@code null}
+     * @throws NullPointerException     if the form is {@code null}
      */
     @Override
     public User profileFormToUser(User user, ProfileForm form) throws IllegalArgumentException, NullPointerException {
@@ -119,9 +124,13 @@ public class UserServiceImpl implements UserService {
             throw new NullPointerException(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
         }
 
+        if (!StringUtils.isBlank(form.getPassword()) && !encoder.matches(form.getPassword(), user.getPassword())) {
+            String encodedPassword = encoder.encodePassword(form.getPassword());
+            user.setPassword(encodedPassword);
+        }
+
         user.setUsername(form.getUsername());
         user.setEmail(form.getEmail());
-        user.setPassword(encoder.encodePassword(form.getPassword()));
 
         log.debug("ProfileForm converted to user successfully");
 

@@ -1,9 +1,5 @@
 -- This file is used to initialize the database with some data.
 
--- TRUNCATE TABLE transactions RESTART IDENTITY CASCADE;
--- TRUNCATE TABLE connection_user RESTART IDENTITY CASCADE;
--- TRUNCATE TABLE "users" RESTART IDENTITY CASCADE;
-
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL NOT NULL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -17,7 +13,6 @@ CREATE TABLE IF NOT EXISTS connection_users (
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     PRIMARY KEY (user_id_1, user_id_2)
 );
-
 
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL NOT NULL PRIMARY KEY,

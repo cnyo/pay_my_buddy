@@ -16,7 +16,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -48,13 +47,18 @@ public class ProfileController {
     }
 
     /**
-     * Updates the user profile based on the submitted form.
+     * Handles the submission of the profile update form.
+     * <p>
+     * Validates the submitted {@link ProfileForm}, updates the authenticated user's profile
+     * if validation passes, and redirects to a logout trigger endpoint to refresh the session.
+     * Displays appropriate flash messages in case of errors or invalid data.
+     * </p>
      *
-     * @param form the profile form
-     * @param errors validation errors
-     * @param userDetails the authenticated user
-     * @param redirectAttributes attributes for redirect messages
-     * @return redirect to the profile page
+     * @param form               the form data containing the updated user profile
+     * @param errors             the validation result for the form
+     * @param userDetails        the currently authenticated user's details
+     * @param redirectAttributes attributes used to pass flash messages on redirect
+     * @return a redirect string to either the logout trigger endpoint or back to the profile form on error
      */
     @PostMapping("/profile")
     public String updateProfile(@Validated ProfileForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
@@ -66,13 +70,11 @@ public class ProfileController {
             }
 
             User authUser = userService.getUserByEmail(userDetails.getUsername());
-            User updatedUser = userService.profileFormToUser(authUser, form);
-            userService.updateUser(updatedUser);
-            redirectAttributes.addFlashAttribute("message_type", "success");
-            redirectAttributes.addFlashAttribute("message", "User updated successfully");
+            authUser = userService.profileFormToUser(authUser, form);
+            userService.updateUser(authUser);
 
             log.info("Post /profile Update profile successfully");
-            return "redirect:/profile?success";
+            return "redirect:/trigger-logout";
         } catch (NullPointerException e) {
             redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "User not found");

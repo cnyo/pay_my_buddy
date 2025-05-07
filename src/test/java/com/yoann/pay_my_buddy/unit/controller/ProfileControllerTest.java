@@ -63,7 +63,7 @@ public class ProfileControllerTest {
 
     @Test
     @WithMockUser(username = "jtest@email.com")
-    public void givenValidUserData_whenUpdatingProfile_thenRedirectWithSuccessMessage() throws Exception {
+    public void givenValidUserData_whenUpdatingProfile_thenLogout() throws Exception {
         // Arrange
         User authUser = new User();
         authUser.setId(1L);
@@ -98,16 +98,34 @@ public class ProfileControllerTest {
 
         // Assert
         result.andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile?success"))
-                .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "success"))
-                .andExpect(flash().attributeExists("message"));
+                .andExpect(redirectedUrl("/trigger-logout"));
 
         verify(userService).profileFormToUser(any(), formCaptor.capture());
         ProfileForm capturedForm = formCaptor.getValue();
         assertThat(capturedForm.getUsername()).isEqualTo(updatedUser.getUsername());
         assertThat(capturedForm.getEmail()).isEqualTo(updatedUser.getEmail());
         assertThat(capturedForm.getPassword()).isNotBlank();
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void givenEmptyPassword_whenUpdatingProfile_thenRedirectWithErrorMessage() throws Exception {
+        // Act
+        ResultActions emptyPasswordResult = mockMvc.perform(post("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf()
+                        )
+                        .param("username", "johndoe")
+                        .param("email", "johndoe@email.com")
+                        .param("password", "")
+                )
+                .andDo(print());
+
+        // Assert
+        emptyPasswordResult.andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/trigger-logout"));
+
+        verify(userService, times(1)).profileFormToUser(any(), any());
     }
 
     @Test
@@ -134,16 +152,6 @@ public class ProfileControllerTest {
                 )
                 .andDo(print());
 
-        ResultActions emptyPasswordResult = mockMvc.perform(post("/profile")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .with(csrf()
-                        )
-                        .param("username", "johndoe")
-                        .param("email", "johndoe@email.com")
-                        .param("password", "")
-                )
-                .andDo(print());
-
         // Assert
         badUsernameResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
@@ -152,12 +160,6 @@ public class ProfileControllerTest {
                 .andExpect(flash().attributeExists("message"));
 
         badEmailResult.andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profile"))
-                .andExpect(flash().attributeExists("message_type"))
-                .andExpect(flash().attribute("message_type", "warning"))
-                .andExpect(flash().attributeExists("message"));
-
-        emptyPasswordResult.andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profile"))
                 .andExpect(flash().attributeExists("message_type"))
                 .andExpect(flash().attribute("message_type", "warning"))

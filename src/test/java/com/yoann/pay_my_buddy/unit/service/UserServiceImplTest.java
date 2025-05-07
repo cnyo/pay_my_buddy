@@ -11,9 +11,13 @@ import com.yoann.pay_my_buddy.service.ConnectionUserFactory;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.service.UserServiceImpl;
 import com.yoann.pay_my_buddy.utils.EncoderUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -227,6 +231,89 @@ public class UserServiceImplTest {
         user.setPassword("password");
 
         // Assert
+        assertThatThrownBy(() -> userService.profileFormToUser(user, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
+    }
+
+    @ParameterizedTest(name = "{index} => password={0}")
+    @NullSource
+    @ValueSource(strings = {"", " "})
+    public void givenProfileFormWithoutPassword_whenConvertProfileFormToUser_thenReturnUser(String password) {
+        // Arrange
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoes");
+        form.setEmail("email@email.com");
+        form.setPassword(password);
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        when(encoder.matches(anyString(),anyString())).thenReturn(false);
+        when(encoder.encodePassword(anyString())).thenReturn("password");
+
+        // Act
+        User result = userService.profileFormToUser(user, form);
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getUsername()).isEqualTo(form.getUsername());
+        assertThat(result.getPassword()).isEqualTo("password");
+    }
+
+    @Test
+    public void givenProfileFormWithNewPassword_whenConvertProfileFormToUser_thenReturnUserWithNewPassword() {
+        // Arrange
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoes");
+        form.setEmail("email@email.com");
+        form.setPassword("new_password");
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        when(encoder.matches(anyString(),anyString())).thenReturn(false);
+        when(encoder.encodePassword(anyString())).thenReturn("new_password");
+
+        // Act
+        User result = userService.profileFormToUser(user, form);
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getUsername()).isEqualTo(form.getUsername());
+        assertThat(result.getPassword()).isEqualTo("new_password");
+    }
+
+    public void givenProfileFormWithoutLongPassword_whenConvertProfileFormToUser_thenReturnUser(String password) {
+        // Arrange
+        ProfileForm form = new ProfileForm();
+        form.setUsername("jdoes");
+        form.setEmail("email@email.com");
+        form.setPassword(Strings.repeat("a", 251));
+
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("jdoe");
+        user.setEmail("jdoe@email.com");
+        user.setPassword("password");
+
+        // Act
+        User result = userService.profileFormToUser(user, form);
+
+        // Assert
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getUsername()).isEqualTo(form.getUsername());
+
+        // Act
         assertThatThrownBy(() -> userService.profileFormToUser(user, null))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());

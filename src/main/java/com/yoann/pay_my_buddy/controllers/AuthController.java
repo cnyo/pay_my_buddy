@@ -22,4 +22,19 @@ public class AuthController {
         log.info("Get login page");
         return "login";
     }
+
+    /**
+     * Handles GET requests to trigger the logout process.
+     * <p>
+     * This method returns the name of a view (e.g., an HTML page) that contains
+     * a form to perform a POST request to the "/logout" endpoint, which is
+     * required by Spring Security to properly log out the user.
+     * </p>
+     *
+     * @return the name of the logout view (e.g., a page containing a logout form)
+     */
+    @GetMapping("/trigger-logout")
+    public String triggerLogout() {
+        return "logout";
+    }
 }

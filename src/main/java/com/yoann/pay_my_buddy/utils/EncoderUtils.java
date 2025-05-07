@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EncoderUtils {
     private final Logger log = LogManager.getLogger(EncoderUtils.class);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     /**
      * Encodes a raw password using BCrypt hashing algorithm.
@@ -20,8 +21,28 @@ public class EncoderUtils {
      */
     public String encodePassword(String password) {
         log.debug("Encode password");
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (password == null || password.isEmpty()) {
+            log.error("Password is null or empty");
+            return null;
+        }
 
         return encoder.encode(password);
+    }
+
+    /**
+     * Checks whether a raw (plaintext) password matches the encoded (hashed) password.
+     * <p>
+     * This method delegates the comparison to the configured {@link PasswordEncoder},
+     * typically used to verify user credentials during authentication.
+     * </p>
+     *
+     * @param rawPassword      the plaintext password provided by the user
+     * @param encodedPassword  the stored hashed password to compare against
+     * @return {@code true} if the passwords match; {@code false} otherwise
+     */
+    public boolean matches(String rawPassword, String encodedPassword) {
+        log.debug("Check if password matches");
+
+        return encoder.matches(rawPassword, encodedPassword);
     }
 }

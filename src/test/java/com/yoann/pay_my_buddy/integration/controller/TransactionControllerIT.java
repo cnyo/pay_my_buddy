@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,11 +43,14 @@ public class TransactionControllerIT {
     @Test
     @WithMockUser(username = "wtest@email.com")
     public void getTransactionPageForWtest_displaysAssociatedUsersAndForm() throws Exception {
-        mockMvc.perform(get("/transaction"))
-                .andDo(print())
+        // Act
+        ResultActions result = mockMvc.perform(get("/transaction"));
+
+        // Assert
+        result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("transaction"))
-                .andExpect(content().string(not(containsString("dtest"))));
+                .andExpect(content().string(containsString("dtest")));
     }
 
     @Test

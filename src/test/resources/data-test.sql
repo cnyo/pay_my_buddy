@@ -1,7 +1,3 @@
-TRUNCATE TABLE transactions RESTART IDENTITY CASCADE;
-TRUNCATE TABLE connection_users RESTART IDENTITY CASCADE;
-TRUNCATE TABLE users RESTART IDENTITY CASCADE;
-
 CREATE TABLE IF NOT EXISTS users (
      id SERIAL NOT NULL PRIMARY KEY,
      username VARCHAR(50) NOT NULL UNIQUE,
@@ -16,7 +12,6 @@ CREATE TABLE IF NOT EXISTS connection_users (
     PRIMARY KEY (user_id_1, user_id_2)
 );
 
-
 CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL NOT NULL PRIMARY KEY,
     sender_user_id INTEGER NOT NULL,
@@ -26,7 +21,6 @@ CREATE TABLE IF NOT EXISTS transactions (
     date DATE NOT NULL
 );
 
--------------------------------------------------------------
 ALTER TABLE IF EXISTS transactions
     DROP CONSTRAINT IF EXISTS chk_transaction_user_id_different;
 
@@ -45,6 +39,11 @@ ALTER TABLE IF EXISTS connection_users
     ADD CONSTRAINT chk_connection_user_id_different
         CHECK (user_id_1 <> user_id_2);
 
+TRUNCATE TABLE transactions RESTART IDENTITY CASCADE;
+TRUNCATE TABLE connection_users RESTART IDENTITY CASCADE;
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+
+-- Insert test data
 INSERT INTO "users"(username, email, password)
 VALUES
     ('jtest', 'jtest@email.com', '$2a$12$Y2j1Yoj8x3Do6.JPXJKd3ucj2Iy4nZzptytPUJEsZSNr6MOGS8AhK'),

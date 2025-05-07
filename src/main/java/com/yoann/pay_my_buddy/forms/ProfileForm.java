@@ -8,7 +8,7 @@ public class ProfileForm extends EmailForm {
     @Size(max = 50)
     private String username;
 
-    @NotEmpty
+    @Size(max = 250)
     private String password;
 
     public ProfileForm() {}

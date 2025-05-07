@@ -51,7 +51,6 @@ public class SpringSecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .invalidateHttpSession(true)
-                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
                 .formLogin(form -> form
