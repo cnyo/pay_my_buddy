@@ -1,4 +1,8 @@
 :focus-visible {
-    outline: 3px solid #0d6efd;
+    outline: 3px solid #207FEE;
     outline-offset: 2px;
+}
+
+.navbar-nav .nav-link.active {
+    color: #207FEE;
 }

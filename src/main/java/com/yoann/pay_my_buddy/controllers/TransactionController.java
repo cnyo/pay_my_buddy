@@ -54,6 +54,8 @@ public class TransactionController {
             model.addAttribute("form", new TransactionForm());
             model.addAttribute("relations", relations);
             model.addAttribute("transactions", dtoTransactions);
+            // todo: enum
+            model.addAttribute("page", "transaction");
         } catch (NullPointerException e) {
             log.error("User not found");
             model.addAttribute("error", "Aucun utilisateur connecté trouvé");
@@ -99,6 +101,8 @@ public class TransactionController {
 
                 model.addAttribute("message", "Une erreur est survenue dans le formulaire");
                 model.addAttribute("message_type", "error");
+                // todo: enum
+                model.addAttribute("page", "transaction");
 
                 return "transaction";
             }

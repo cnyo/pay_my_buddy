@@ -42,6 +42,8 @@ public class ProfileController {
         User authUser = userService.getUserByEmail(user.getUsername());
         model.addAttribute("user", authUser);
         model.addAttribute("form", new ProfileForm(authUser.getUsername(), authUser.getEmail()));
+        // todo: enum
+        model.addAttribute("page", "profile");
 
         return "profile";
     }

@@ -42,6 +42,8 @@ public class ConnectionController {
     @GetMapping("/relation")
     public String relation(HttpServletRequest request, Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
         model.addAttribute("user", new User());
+        // todo: enum
+        model.addAttribute("page", "relation");
 
         return "relation";
     }

@@ -6,9 +6,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item mr-6"><a class="nav-link" href="./transfer" data-th-href="@{/transaction}">Transférer</a></li>
-                <li class="nav-item mr-6"><a class="nav-link" href="./profile" th:href="@{/profile}">Profile</a></li>
-                <li class="nav-item mr-6"><a class="nav-link" href="./relation" data-th-href="@{/relation}">Ajouter relation</a></li>
+                <li class="nav-item mr-6"><a class="nav-link" th:class="${page} == 'transaction' ? 'nav-link fw-bold active' : 'nav-link'" href="./transfer" data-th-href="@{/transaction}">Transférer</a></li>
+                <li class="nav-item mr-6"><a class="nav-link" th:class="${page} == 'profile' ? 'nav-link fw-bold active' : 'nav-link'" th:href="@{/profile}">Profile</a></li>
+                <li class="nav-item mr-6"><a class="nav-link" th:class="${page} == 'relation' ? 'nav-link fw-bold active' : 'nav-link'" href="./relation" data-th-href="@{/relation}">Ajouter relation</a></li>
                 <li class="nav-item mr-6" th:include="~{fragments/_logout_form}"></li>
             </ul>
         </div>
