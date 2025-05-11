@@ -11,7 +11,6 @@ import com.yoann.pay_my_buddy.service.ConnectionUserFactory;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.service.UserServiceImpl;
 import com.yoann.pay_my_buddy.utils.EncoderUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

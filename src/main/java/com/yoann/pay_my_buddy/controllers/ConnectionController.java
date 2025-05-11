@@ -7,7 +7,6 @@ import com.yoann.pay_my_buddy.forms.EmailForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserService;
 import com.yoann.pay_my_buddy.utils.ValidationUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +33,6 @@ public class ConnectionController {
     /**
      * Displays the relation page where the user can add a connection.
      *
-     * @param request the HTTP request
      * @param model the Spring model
      * @param flashAttribute the flash attribute from previous requests
      * @return the relation view name
@@ -56,7 +54,6 @@ public class ConnectionController {
      * @param userDetails the authenticated user
      * @param redirectAttributes attributes for redirect messages
      * @return redirect to the relation page
-     * @throws ConnectionUserException if a technical problem occurs during the connection process
      */
     @PostMapping("/relation")
     public String addRelation(@Valid @ModelAttribute final EmailForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {

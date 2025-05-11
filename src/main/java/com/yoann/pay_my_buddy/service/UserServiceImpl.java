@@ -9,7 +9,6 @@ import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.repository.UserRepository;
 import com.yoann.pay_my_buddy.utils.EncoderUtils;
 import com.yoann.pay_my_buddy.utils.ValidationUtils;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
