@@ -15,6 +15,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    @Query(value="SELECT * FROM users u JOIN connection_users c ON u.id <> :userId AND (u.id = c.user_id_1 OR u.id = c.user_id_2)", nativeQuery = true)
+    @Query(value="SELECT * FROM users u JOIN connection_users c ON (c.user_id_1 = 2 AND c.user_id_2 = u.id) OR (c.user_id_1 = u.id AND c.user_id_2 = 2)", nativeQuery = true)
     List<User> getConnectedUsersFromUser(@Param("userId") Long userId);
 }
