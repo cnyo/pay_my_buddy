@@ -22,15 +22,6 @@ public interface UserService {
     Iterable<User> getUsers();
 
     /**
-     * Retrieves a user by ID.
-     *
-     * @param id the user ID.
-     * @return the corresponding {@link User}.
-     * @throws EntityNotFoundException if no user with the given ID exists.
-     */
-    User getUser(Long id);
-
-    /**
      * Adds a new user to the database.
      *
      * @param user the {@link User} to add.

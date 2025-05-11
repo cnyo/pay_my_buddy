@@ -88,7 +88,6 @@ public class TransactionControllerIT {
                 .andExpect(view().name("transaction"))
                 .andExpect(model().attributeHasFieldErrors("form", "amount"))
                 .andExpect(model().attribute("message_type", "error"));
-        ;
     }
 
     @Test

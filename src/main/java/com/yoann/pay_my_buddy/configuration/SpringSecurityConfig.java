@@ -12,11 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -41,6 +37,7 @@ public class SpringSecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.debug("Configuring security filter chain");
         http
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login", "/css/*", "/logout").permitAll();
@@ -73,6 +70,7 @@ public class SpringSecurityConfig {
      */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
+        log.debug("Configuring BCryptPasswordEncoder");
         return new BCryptPasswordEncoder();
     }
 
@@ -86,6 +84,7 @@ public class SpringSecurityConfig {
      */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder encoder) throws Exception {
+        log.debug("Configuring AuthenticationManager");
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(encoder);
 

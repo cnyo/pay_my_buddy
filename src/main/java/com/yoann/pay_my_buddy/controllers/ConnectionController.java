@@ -40,7 +40,7 @@ public class ConnectionController {
      * @return the relation view name
      */
     @GetMapping("/relation")
-    public String relation(HttpServletRequest request, Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
+    public String relation(Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
         model.addAttribute("user", new User());
         // todo: enum
         model.addAttribute("page", "relation");
@@ -59,7 +59,7 @@ public class ConnectionController {
      * @throws ConnectionUserException if a technical problem occurs during the connection process
      */
     @PostMapping("/relation")
-    public String addRelation(@Valid @ModelAttribute final EmailForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) throws ConnectionUserException {
+    public String addRelation(@Valid @ModelAttribute final EmailForm form, Errors errors, @AuthenticationPrincipal UserDetails userDetails, RedirectAttributes redirectAttributes) {
         log.info("Post /relation Add connection with user by email");
 
         if (errors.hasErrors()) {

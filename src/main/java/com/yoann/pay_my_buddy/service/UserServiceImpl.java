@@ -49,19 +49,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Retrieves a user by ID.
-     *
-     * @param id the user ID.
-     * @return the corresponding {@link User}.
-     * @throws EntityNotFoundException if no user with the given ID exists.
-     */
-    @Override
-    public User getUser(Long id) {
-        log.debug("Getting user with id");
-        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
-    /**
      * Adds a new user to the database.
      *
      * @param user the {@link User} to add.

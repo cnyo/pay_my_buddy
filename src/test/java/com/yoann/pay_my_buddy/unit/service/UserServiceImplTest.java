@@ -106,7 +106,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void addConnectionUser_whenUserToConnectIsNull_thenThrowException() throws NullUserConnectionUserException {
+    public void addConnectionUser_whenUserToConnectIsNull_thenThrowException() {
         assertThatThrownBy(() -> userService.addConnectionToUser(new User(), null)).isInstanceOf(NullUserConnectionUserException.class);
     }
 
@@ -290,33 +290,6 @@ public class UserServiceImplTest {
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getUsername()).isEqualTo(form.getUsername());
         assertThat(result.getPassword()).isEqualTo("new_password");
-    }
-
-    public void givenProfileFormWithoutLongPassword_whenConvertProfileFormToUser_thenReturnUser(String password) {
-        // Arrange
-        ProfileForm form = new ProfileForm();
-        form.setUsername("jdoes");
-        form.setEmail("email@email.com");
-        form.setPassword(Strings.repeat("a", 251));
-
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("jdoe");
-        user.setEmail("jdoe@email.com");
-        user.setPassword("password");
-
-        // Act
-        User result = userService.profileFormToUser(user, form);
-
-        // Assert
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getUsername()).isEqualTo(form.getUsername());
-
-        // Act
-        assertThatThrownBy(() -> userService.profileFormToUser(user, null))
-                .isInstanceOf(NullPointerException.class)
-                .hasMessageContaining(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
     }
 
     @Test
