@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.controllers;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
+import com.yoann.pay_my_buddy.enums.PageName;
 import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
@@ -54,8 +55,7 @@ public class TransactionController {
             model.addAttribute("form", new TransactionForm());
             model.addAttribute("relations", relations);
             model.addAttribute("transactions", dtoTransactions);
-            // todo: enum
-            model.addAttribute("page", "transaction");
+            model.addAttribute("page", PageName.TRANSACTION.getPage());
         } catch (NullPointerException e) {
             log.error("User not found");
             model.addAttribute("error", "Aucun utilisateur connecté trouvé");
@@ -101,8 +101,7 @@ public class TransactionController {
 
                 model.addAttribute("message", "Une erreur est survenue dans le formulaire");
                 model.addAttribute("message_type", "error");
-                // todo: enum
-                model.addAttribute("page", "transaction");
+                model.addAttribute("page", PageName.TRANSACTION.getPage());
 
                 return "transaction";
             }

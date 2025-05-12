@@ -1,5 +1,6 @@
 package com.yoann.pay_my_buddy.controllers;
 
+import com.yoann.pay_my_buddy.enums.PageName;
 import com.yoann.pay_my_buddy.exception.ConnectionUserException;
 import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
@@ -40,8 +41,7 @@ public class ConnectionController {
     @GetMapping("/relation")
     public String relation(Model model, @ModelAttribute("flashAttribute") Object flashAttribute) {
         model.addAttribute("user", new User());
-        // todo: enum
-        model.addAttribute("page", "relation");
+        model.addAttribute("page", PageName.RELATION.getPage());
 
         return "relation";
     }

@@ -1,5 +1,6 @@
 package com.yoann.pay_my_buddy.controllers;
 
+import com.yoann.pay_my_buddy.enums.PageName;
 import com.yoann.pay_my_buddy.exception.BadProfileDataException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.forms.ProfileForm;
@@ -42,8 +43,7 @@ public class ProfileController {
         User authUser = userService.getUserByEmail(user.getUsername());
         model.addAttribute("user", authUser);
         model.addAttribute("form", new ProfileForm(authUser.getUsername(), authUser.getEmail()));
-        // todo: enum
-        model.addAttribute("page", "profile");
+        model.addAttribute("page", PageName.PROFILE.getPage());
 
         return "profile";
     }
