@@ -73,7 +73,7 @@
             <td data-th-text="${t?.relationUsername}"></td>
             <td data-th-text="${t?.description}"></td>
             <td class="text-end">
-                <strong class="p-1" th:classappend="${t?.isSender} ? 'text-bg-success' : 'text-bg-danger'"
+                <strong class="p-1" th:classappend="${t?.isSender} ? 'text-bg-danger' : 'text-bg-success'"
                         data-th-text="${t?.amountCurrency}">0.00 €</strong>
             </td>
         </tr>
