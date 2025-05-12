@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@ActiveProfiles("test") // todo: utilité ?
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Sql(scripts = "/data-test.sql")
 public class ConnectionControllerIT {
