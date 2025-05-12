@@ -23,3 +23,14 @@ Vérification de l'initialisation
 ```
 psql -h localhost -p 5432 -U postgres -d pay_my_buddy -c "\dt"
 ```
+
+Deploy
+```
+ java -jar .\target\alerts-0.0.1-SNAPSHOT.jar
+```
+
+Generate surfire report
+```
+mvn site
+mvn surefire-report:report
+```
