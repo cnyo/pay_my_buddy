@@ -87,7 +87,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void addTransaction_whenTransactionIsNull_shouldReturnError() throws UserTransactionException {
+    public void addTransaction_whenTransactionIsNull_shouldReturnError() {
         assertThatThrownBy(()-> transactionService.addTransaction(null)).isInstanceOf(UserTransactionException.class);
     }
 
@@ -249,7 +249,6 @@ public class TransactionServiceTest {
     public void givenTransaction_whenReceiverIsInARelation_shouldReturnTransaction() throws UserIsNotInRelationException {
         // Arrange
         User authUser = new User();
-        User receiverUser = new User();
 
         // Arrange
         TransactionForm transactionForm = new TransactionForm();

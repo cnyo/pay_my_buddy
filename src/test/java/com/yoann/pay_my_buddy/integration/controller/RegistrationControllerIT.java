@@ -83,6 +83,5 @@ public class RegistrationControllerIT {
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/registration?error"));
-        ;
     }
 }

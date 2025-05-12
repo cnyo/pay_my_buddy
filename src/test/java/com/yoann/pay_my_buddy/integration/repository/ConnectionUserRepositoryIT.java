@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -23,9 +22,6 @@ public class ConnectionUserRepositoryIT {
 
     @Autowired
     private ConnectionUserRepository connectionUserRepository;
-
-    @Autowired
-    private TestEntityManager em;
 
     @Test
     public void whenFindAll_thenReturnListOfConnectionUsers() {
