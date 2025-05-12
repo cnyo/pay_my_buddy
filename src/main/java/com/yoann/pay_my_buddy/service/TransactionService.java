@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.service;
 
 import com.yoann.pay_my_buddy.dto.TransactionDto;
+import com.yoann.pay_my_buddy.exception.UserIsNotInRelationException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.model.Transaction;
@@ -45,14 +46,15 @@ public interface TransactionService {
     List<TransactionDto> mapTransactionsToDtoList(Iterable<Transaction> transactions, User authUser);
 
     /**
-     * Initializes a {@link Transaction} from a form and the authenticated user.
+     * Initializes a transaction from the authenticated user to the recipient specified in the form.
      *
-     * @param form     the submitted {@link TransactionForm}.
-     * @param authUser the authenticated {@link User} who initiates the transaction.
-     * @return a partially built {@link Transaction} entity.
-     * @throws IllegalArgumentException if the receiver user ID is null.
+     * @param form the form containing transaction details, including the recipient's email and the amount
+     * @param authUser the currently authenticated user initiating the transaction
+     * @return the created {@link Transaction} entity with all fields populated
+     * @throws IllegalArgumentException if the transaction amount is invalid or the recipient email is missing
+     * @throws UserIsNotInRelationException if the recipient is not connected to the authenticated user
      */
-    Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException;
+    Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException, UserIsNotInRelationException;
 
     /**
      * Sets the sender user of a {@link Transaction}.

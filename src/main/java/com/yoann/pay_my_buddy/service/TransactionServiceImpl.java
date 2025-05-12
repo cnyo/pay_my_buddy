@@ -3,11 +3,13 @@ package com.yoann.pay_my_buddy.service;
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
+import com.yoann.pay_my_buddy.exception.UserIsNotInRelationException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
+import com.yoann.pay_my_buddy.repository.ConnectionUserRepository;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,6 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private ConnectionUserRepository connectionUserRepository;
 
     @Autowired
     private TransactionMapper transactionMapper;
@@ -108,15 +113,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Initializes a {@link Transaction} from a form and the authenticated user.
+     * Initializes a transaction from the authenticated user to the recipient specified in the form.
      *
-     * @param form     the submitted {@link TransactionForm}.
-     * @param authUser the authenticated {@link User} who initiates the transaction.
-     * @return a partially built {@link Transaction} entity.
-     * @throws IllegalArgumentException if the receiver user ID is null.
+     * @param form the form containing transaction details, including the recipient's email and the amount
+     * @param authUser the currently authenticated user initiating the transaction
+     * @return the created {@link Transaction} entity with all fields populated
+     * @throws IllegalArgumentException if the transaction amount is invalid or the recipient email is missing
+     * @throws UserIsNotInRelationException if the recipient is not connected to the authenticated user
      */
     @Override
-    public Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException {
+    public Transaction initTransactionForAuthUser(TransactionForm form, User authUser) throws IllegalArgumentException, UserIsNotInRelationException {
         log.debug("Call initTransaction");
         Transaction transaction = new Transaction();
         transaction.setDescription(form.getDescription());
@@ -127,6 +133,11 @@ public class TransactionServiceImpl implements TransactionService {
         } else {
             log.error("Receiver user id is null");
             throw new IllegalArgumentException("Receiver user id is null");
+        }
+
+        if (connectionUserRepository.countRelationForUsersId(authUser.getId(), form.getReceiverUserIdAsLong()) == 0) {
+            log.error("No connection between sender and receiver");
+            throw new UserIsNotInRelationException("No connection between sender and receiver");
         }
 
         return attachSenderUser(transaction, authUser);

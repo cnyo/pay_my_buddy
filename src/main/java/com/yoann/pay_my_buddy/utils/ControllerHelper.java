@@ -17,7 +17,7 @@ public class ControllerHelper {
      */
     public static void handleBusinessError(Logger log, RedirectAttributes redirectAttributes, Exception e) {
         log.error("business error : {}", e.getMessage(), e);
-        redirectAttributes.addFlashAttribute("error_message", e.getMessage());
-        redirectAttributes.addFlashAttribute("message", "error");
+        redirectAttributes.addFlashAttribute("message", e.getMessage());
+        redirectAttributes.addFlashAttribute("message_type", "warning");
     }
 }

@@ -18,6 +18,8 @@
 <section class="mx-5">
     <div class="m-3" sec:authorize="isAuthenticated()">Bonjour <span class="fw-bold" sec:authentication="name"></span></div>
     <form class="row g-3" method="post" action="#" data-th-action="@{/transaction}" data-th-if="${form}" data-th-object="${form}">
+        <!-- Flash message -->
+        <div th:replace="~{fragments/_flash_message}"></div>
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
             Veuillez corriger les erreurs dans le formulaire.
         </div>

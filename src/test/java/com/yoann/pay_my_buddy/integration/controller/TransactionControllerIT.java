@@ -29,20 +29,7 @@ public class TransactionControllerIT {
 
     @Test
     @WithMockUser(username = "jtest@email.com")
-    public void getTransactionPageForJtest_displaysAssociatedUsersAndForm() throws Exception {
-        // Act
-        ResultActions result = mockMvc.perform(get("/transaction"));
-
-        // Assert
-        result.andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("transaction"))
-                .andExpect(content().string(containsString("dtest")));
-    }
-
-    @Test
-    @WithMockUser(username = "wtest@email.com")
-    public void getTransactionPageForWtest_displaysAssociatedUsersAndForm() throws Exception {
+    public void getTransactionPageForCurrentUser_displaysAssociatedUsersAndForm() throws Exception {
         // Act
         ResultActions result = mockMvc.perform(get("/transaction"));
 
@@ -55,20 +42,47 @@ public class TransactionControllerIT {
 
     @Test
     @WithMockUser(username = "jtest@email.com")
-    public void postFormTransaction_thenOk() throws Exception {
-        mockMvc.perform(
-                    post("/transaction")
+    public void postFormTransaction_withUserInRelation_thenOk() throws Exception {
+        // Act
+        ResultActions result = mockMvc.perform(
+                post("/transaction")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("receiverUserId", "2")
                         .param("description", "Test transaction")
                         .param("amount", "2000")
-                )
+        );
+
+        // Assert
+        result
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/transaction"))
                 .andExpect(status().isFound())
                 .andExpect(flash().attribute("message_type", "success"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void postFormTransaction_withUserNotInRelation_thenError() throws Exception {
+        // Act
+        ResultActions result = mockMvc.perform(
+                post("/transaction")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("receiverUserId", "3")
+                        .param("description", "Test transaction")
+                        .param("amount", "2000")
+        );
+
+        // Assert
+        result
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/transaction"))
+                .andExpect(status().isFound())
+                .andExpect(flash().attribute("message_type", "error"))
         ;
     }
 

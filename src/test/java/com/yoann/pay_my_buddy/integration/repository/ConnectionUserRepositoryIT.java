@@ -38,4 +38,22 @@ public class ConnectionUserRepositoryIT {
         assertThat(connection.get().getUser1().getUsername()).isEqualTo("jtest");
         assertThat(connection.get().getUser2().getUsername()).isEqualTo("dtest");
     }
+
+    @Test
+    public void whenCountUsersInRelation_thenReturn1() {
+        // Act
+        Integer result = connectionUserRepository.countRelationForUsersId(1L, 2L);
+
+        // Assert
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
+    public void whenCountUsersInRelation_thenReturn0() {
+        // Act
+        Integer result = connectionUserRepository.countRelationForUsersId(1L, 3L);
+
+        // Assert
+        assertThat(result).isEqualTo(0);
+    }
 }

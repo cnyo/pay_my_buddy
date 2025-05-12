@@ -3,6 +3,7 @@ package com.yoann.pay_my_buddy.model;
 import jakarta.persistence.*;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "users")
@@ -20,11 +21,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConnectionUser> connections = new ArrayList<>();
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ConnectionUser> user1Connections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ConnectionUser> associatedConnections = new ArrayList<>();
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ConnectionUser> user2Connections = new ArrayList<>();
 
     @OneToMany(mappedBy = "senderUser")
     private List<Transaction> senderTransactions = new ArrayList<>();
@@ -72,13 +73,13 @@ public class User {
         return this;
     }
 
-    public List<ConnectionUser> getConnections() {
-        return connections;
+    public List<ConnectionUser> getUser1Connections() {
+        return user1Connections;
     }
 
     public User addConnectionUser(ConnectionUser connectionUser) {
         if (connectionUser.getUser2() != null && connectionUser.getUser1() != null) {
-            connections.add(connectionUser);
+            user1Connections.add(connectionUser);
         }
 
         return this;
@@ -86,28 +87,28 @@ public class User {
 
     public User addConnectedUser(ConnectionUser connectionUser) {
         if (connectionUser.getUser2() != null && connectionUser.getUser1() != null) {
-            connections.add(connectionUser);
+            user1Connections.add(connectionUser);
         }
 
         return this;
     }
 
     public User removeConnectionUser(ConnectionUser connectionUser) {
-        connections.remove(connectionUser);
+        user1Connections.remove(connectionUser);
 
         return this;
     }
 
-    public void setConnections(List<ConnectionUser> connections) {
-        this.connections = connections;
+    public void setUser1Connections(List<ConnectionUser> connections) {
+        this.user1Connections = connections;
     }
 
-    public List<ConnectionUser> getAssociatedConnections() {
-        return associatedConnections;
+    public List<ConnectionUser> getUser2Connections() {
+        return user2Connections;
     }
 
-    public void setAssociatedConnections(List<ConnectionUser> associatedConnections) {
-        this.associatedConnections = associatedConnections;
+    public void setUser2Connections(List<ConnectionUser> associatedConnections) {
+        this.user2Connections = associatedConnections;
     }
 
     public List<Transaction> getSenderTransactions() {
@@ -153,5 +154,23 @@ public class User {
         transaction.setSenderUser(null);
 
         return this;
+    }
+
+    public boolean isInRelationWith(User user) {
+        Long userId = user.getId();
+
+        if (userId == null) {
+            return false;
+        }
+
+        if (this.getId().equals(userId)) {
+            return false;
+        }
+
+        return Stream.concat(user1Connections.stream(), user2Connections.stream()).anyMatch(
+                connectionUser -> connectionUser.getUser1().getId().equals(user.getId()) ||
+                        connectionUser.getUser2().getId().equals(user.getId())
+        );
+
     }
 }

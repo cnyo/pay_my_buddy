@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
         validateUsers(currentUser, userToConnect);
         log.debug("Adding connection from user {} to user {}", currentUser.getId(), userToConnect.getId());
 
-        if (currentUser.getConnections().stream().anyMatch(c -> c.getUser2().getId().equals(userToConnect.getId()))) {
+        if (currentUser.getUser1Connections().stream().anyMatch(c -> c.getUser2().getId().equals(userToConnect.getId()))) {
             log.error("user already connected");
             throw new UserAlreadyConnectedException();
         }

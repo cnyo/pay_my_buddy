@@ -3,11 +3,13 @@ package com.yoann.pay_my_buddy.unit.service;
 import com.yoann.pay_my_buddy.dto.TransactionDto;
 import com.yoann.pay_my_buddy.exception.NegativeAmountException;
 import com.yoann.pay_my_buddy.exception.SameUserTransactionException;
+import com.yoann.pay_my_buddy.exception.UserIsNotInRelationException;
 import com.yoann.pay_my_buddy.exception.UserTransactionException;
 import com.yoann.pay_my_buddy.forms.TransactionForm;
 import com.yoann.pay_my_buddy.mapper.TransactionMapper;
 import com.yoann.pay_my_buddy.model.Transaction;
 import com.yoann.pay_my_buddy.model.User;
+import com.yoann.pay_my_buddy.repository.ConnectionUserRepository;
 import com.yoann.pay_my_buddy.repository.TransactionRepository;
 import com.yoann.pay_my_buddy.service.TransactionServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,9 @@ public class TransactionServiceTest {
 
     @Mock
     private TransactionRepository transactionRepository;
+
+    @Mock
+    private ConnectionUserRepository connectionUserRepository;
 
     @Mock
     TransactionMapper transactionMapper;
@@ -163,7 +168,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void givenTransactionFormAndAuthUser_whenInitTransaction_shouldReturnTransaction() {
+    public void givenTransactionFormAndAuthUser_whenInitTransaction_shouldReturnTransaction() throws UserIsNotInRelationException {
         // Arrange
         TransactionForm transactionForm = new TransactionForm();
         transactionForm.setDescription("Test");
@@ -238,5 +243,42 @@ public class TransactionServiceTest {
     public void givenTransactionUser_whenGetAllTransactionsWithUserWithoutId_shouldReturnException() {
         // Act && Assert
         assertThatThrownBy(() -> transactionService.getAllTransactionsByUser(new User())).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    public void givenTransaction_whenReceiverIsInARelation_shouldReturnTransaction() throws UserIsNotInRelationException {
+        // Arrange
+        User authUser = new User();
+        User receiverUser = new User();
+
+        // Arrange
+        TransactionForm transactionForm = new TransactionForm();
+        transactionForm.setDescription("Test");
+        transactionForm.setAmount("2000");
+        transactionForm.setReceiverUserId("2");
+
+        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(1);
+
+        // Act
+        Transaction result=  transactionService.initTransactionForAuthUser(transactionForm, authUser);
+
+        // Assert
+        assertThat(result).isInstanceOf(Transaction.class);
+    }
+
+    @Test
+    public void givenTransaction_whenReceiverIsNotARelation_shouldReturnException() {
+        // Arrange
+        User authUser = new User();
+
+        TransactionForm transactionForm = new TransactionForm();
+        transactionForm.setDescription("Test");
+        transactionForm.setAmount("2000");
+        transactionForm.setReceiverUserId("2");
+
+        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(0);
+
+        // Act && Assert
+        assertThatThrownBy(() -> transactionService.initTransactionForAuthUser(transactionForm, authUser)).isInstanceOf(UserIsNotInRelationException.class);
     }
 }

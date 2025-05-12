@@ -123,8 +123,7 @@ public class UserRepositoryIT {
     public void attachNewAssociatedUser_whenSave_thenSuccess() {
         // Get main user to add association
         User mainUser = em.find(User.class, 1);
-//        User mainUser = userRepository.findById(1);
-        Integer initialCountConnectionUsers = mainUser.getConnections().size();
+        Integer initialCountConnectionUsers = mainUser.getUser1Connections().size();
 
         // Given new user to associate
         User newUser = new User();
@@ -139,12 +138,12 @@ public class UserRepositoryIT {
 
         User updatedMainUser = userRepository.save(mainUser);
 
-        Optional<ConnectionUser> optResult = mainUser.getConnections().stream().filter(
+        Optional<ConnectionUser> optResult = mainUser.getUser1Connections().stream().filter(
                 cu -> cu.getUser1().getId().equals(1L) && cu.getUser2().equals(insertedAssociedUser)
         ).findFirst();
 
         assertThat(initialCountConnectionUsers).isEqualTo(1);
-        assertThat(updatedMainUser.getConnections().size()).isEqualTo(2);
+        assertThat(updatedMainUser.getUser1Connections().size()).isEqualTo(2);
         assertThat(optResult.isPresent()).isTrue();
         assertThat(optResult.get().getUser1()).isEqualTo(updatedMainUser);
         assertThat(optResult.get().getUser2()).isEqualTo(insertedAssociedUser);
@@ -175,7 +174,7 @@ public class UserRepositoryIT {
         mainUser.removeConnectionUser(connectionUser);
         User updatedMainUser = userRepository.save(mainUser);
 
-        assertThat(updatedMainUser.getConnections().size()).isEqualTo(0);
+        assertThat(updatedMainUser.getUser1Connections().size()).isEqualTo(0);
         assertThat(em.find(User.class, 2)).isNotNull();
         assertThat(em.find(User.class, 2).getId()).isEqualTo(2);
     }
@@ -184,7 +183,7 @@ public class UserRepositoryIT {
     public void whenCountConnectionUser_thenReturnSize() {
         User mainUser = em.find(User.class, 1);
 
-        assertThat(mainUser.getConnections().size()).isEqualTo(1);
+        assertThat(mainUser.getUser1Connections().size()).isEqualTo(1);
     }
 
     @Test
