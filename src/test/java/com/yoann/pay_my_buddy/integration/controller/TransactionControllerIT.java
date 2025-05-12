@@ -82,7 +82,7 @@ public class TransactionControllerIT {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/transaction"))
                 .andExpect(status().isFound())
-                .andExpect(flash().attribute("message_type", "error"))
+                .andExpect(flash().attribute("message_type", "warning"))
         ;
     }
 

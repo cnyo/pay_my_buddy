@@ -179,6 +179,8 @@ public class TransactionServiceTest {
         authUser.setId(1L);
         authUser.setUsername("authUser");
 
+        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(1);
+
         // Act
         Transaction result = transactionService.initTransactionForAuthUser(transactionForm, authUser);
 
@@ -188,6 +190,22 @@ public class TransactionServiceTest {
         assertThat(result.getDescription()).isEqualTo("Test");
         assertThat(result.getAmount()).isEqualTo(2000.0);
         assertThat(result.getSenderUser()).isEqualTo(authUser);
+    }
+
+    @Test
+    public void givenTransaction_whenReceiverIsNotARelation_shouldReturnException() {
+        // Arrange
+        User authUser = new User();
+
+        TransactionForm transactionForm = new TransactionForm();
+        transactionForm.setDescription("Test");
+        transactionForm.setAmount("2000");
+        transactionForm.setReceiverUserId("2");
+
+        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(0);
+
+        // Act && Assert
+        assertThatThrownBy(() -> transactionService.initTransactionForAuthUser(transactionForm, authUser)).isInstanceOf(UserIsNotInRelationException.class);
     }
 
     @Test
@@ -243,41 +261,5 @@ public class TransactionServiceTest {
     public void givenTransactionUser_whenGetAllTransactionsWithUserWithoutId_shouldReturnException() {
         // Act && Assert
         assertThatThrownBy(() -> transactionService.getAllTransactionsByUser(new User())).isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    public void givenTransaction_whenReceiverIsInARelation_shouldReturnTransaction() throws UserIsNotInRelationException {
-        // Arrange
-        User authUser = new User();
-
-        // Arrange
-        TransactionForm transactionForm = new TransactionForm();
-        transactionForm.setDescription("Test");
-        transactionForm.setAmount("2000");
-        transactionForm.setReceiverUserId("2");
-
-        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(1);
-
-        // Act
-        Transaction result=  transactionService.initTransactionForAuthUser(transactionForm, authUser);
-
-        // Assert
-        assertThat(result).isInstanceOf(Transaction.class);
-    }
-
-    @Test
-    public void givenTransaction_whenReceiverIsNotARelation_shouldReturnException() {
-        // Arrange
-        User authUser = new User();
-
-        TransactionForm transactionForm = new TransactionForm();
-        transactionForm.setDescription("Test");
-        transactionForm.setAmount("2000");
-        transactionForm.setReceiverUserId("2");
-
-        when(connectionUserRepository.countRelationForUsersId(any(), any())).thenReturn(0);
-
-        // Act && Assert
-        assertThatThrownBy(() -> transactionService.initTransactionForAuthUser(transactionForm, authUser)).isInstanceOf(UserIsNotInRelationException.class);
     }
 }
