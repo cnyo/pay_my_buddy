@@ -1,6 +1,7 @@
 package com.yoann.pay_my_buddy.unit.controller;
 
 import com.yoann.pay_my_buddy.controllers.ProfileController;
+import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.forms.ProfileForm;
 import com.yoann.pay_my_buddy.model.User;
 import com.yoann.pay_my_buddy.service.UserServiceImpl;
@@ -59,6 +60,29 @@ public class ProfileControllerTest {
                 .andExpect(view().name("profile"))
                 .andExpect(content().string(containsString("jtest")))
                 .andExpect(content().string(containsString("jtest@email.com")));
+    }
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void whenGetProfilePage_whenUserNotFound_shouldThrowException() throws Exception {
+        // Arrange
+        when(userService.getUserByEmail(anyString())).thenThrow(UserNotFoundException.class);
+
+        // Act
+        ResultActions result = mockMvc.perform(post("/profile")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(csrf())
+                        .param("username", "jtest")
+                        .param("email", "test@email.com")
+                        .param("password", "password")
+                );
+
+        // Assert
+        result
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("message_type", "warning"))
+                .andExpect(flash().attribute("message", "User not found"));
     }
 
     @Test
