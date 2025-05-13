@@ -66,13 +66,6 @@ public class ConnectionController {
             return "redirect:/relation";
         }
 
-        if (!ValidationUtils.emailIsValid(form.getEmail())) {
-            log.error("Post /relation Email is invalid");
-            redirectAttributes.addFlashAttribute("message_type", "warning");
-            redirectAttributes.addFlashAttribute("message", "Email is invalid");
-            return "redirect:/relation";
-        }
-
         try {
             User authUser = userService.getUserByEmail(userDetails.getUsername());
             User userToConnect = userService.getUserByEmail(form.getEmail());
@@ -86,16 +79,11 @@ public class ConnectionController {
             redirectAttributes.addFlashAttribute("message_type", "warning");
             redirectAttributes.addFlashAttribute("message", "User not found");
             log.error("Post /relation {}", "User not found");
-        } catch (UserAlreadyConnectedException e) {
-            log.error(e.getMessage());
-            redirectAttributes.addFlashAttribute("message_type", "warning");
-            redirectAttributes.addFlashAttribute("message", "User already connected");
-            log.error("Post /relation {}","User already connected");
         } catch (ConnectionUserException e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("message_type", "warning");
-            redirectAttributes.addFlashAttribute("message", "handle connection failed");
-            log.error("Post /relation {}", "handle connection failed");
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+            log.error("Post /relation {}", e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
             redirectAttributes.addFlashAttribute("message_type", "danger");

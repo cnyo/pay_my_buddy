@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (form == null) {
-            log.error("form is null");
+            log.error("profile form is null");
             throw new NullPointerException(UserExceptionMessage.USER_PROFILE_FORM_IS_NULL.getMessage());
         }
 
@@ -136,6 +136,7 @@ public class UserServiceImpl implements UserService {
         validateUsers(currentUser, userToConnect);
         log.debug("Adding connection from user {} to user {}", currentUser.getId(), userToConnect.getId());
 
+        // Check if the user to connect is already connected
         if (currentUser.getUser1Connections().stream().anyMatch(c -> c.getUser2().getId().equals(userToConnect.getId()))) {
             log.error("user already connected");
             throw new UserAlreadyConnectedException();
@@ -230,6 +231,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User initUserFromRegistrationForm(RegistrationForm form) throws BadRegistrationDataException {
         log.debug("Init user from registration form");
+
+        if (form == null) {
+            log.error("registration form is null");
+            throw new BadRegistrationDataException();
+        }
 
         if (!ValidationUtils.emailIsValid(form.getEmail())) {
             log.error("email {} is invalid", form.getEmail());

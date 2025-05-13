@@ -1,7 +1,8 @@
 package com.yoann.pay_my_buddy.unit.controller;
 
 import com.yoann.pay_my_buddy.controllers.ConnectionController;
-import com.yoann.pay_my_buddy.exception.UserAlreadyConnectedException;
+import com.yoann.pay_my_buddy.enums.PageName;
+import com.yoann.pay_my_buddy.exception.ConnectionUserException;
 import com.yoann.pay_my_buddy.exception.UserNotFoundException;
 import com.yoann.pay_my_buddy.model.ConnectionUser;
 import com.yoann.pay_my_buddy.model.User;
@@ -18,12 +19,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,6 +38,22 @@ public class ConnectionControllerTest {
 
     @MockitoBean
     private UserServiceImpl userService;
+
+    @Test
+    @WithMockUser(username = "jtest@email.com")
+    public void whenGetRelationPage_thenShowForm() throws Exception {
+        // Act
+        ResultActions result = mockMvc.perform(get("/relation"));
+        
+        // Assert
+        result
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("relation"))
+                .andExpect(model().attribute("user", instanceOf(User.class)))
+                .andExpect(model().attribute("page", PageName.RELATION.getPage()))
+                .andExpect(content().string(containsString("Chercher une relation")));
+    }
 
     @Test
     @WithMockUser(username = "jtest@email.com")
@@ -121,7 +138,7 @@ public class ConnectionControllerTest {
         authUser.setPassword("password");
 
         when(userService.getUserByEmail(anyString())).thenReturn(authUser);
-        when(userService.addConnectionToUser(any(), any())).thenThrow(UserAlreadyConnectedException.class);
+        when(userService.addConnectionToUser(any(), any())).thenThrow(new ConnectionUserException());
 
         // Act
         ResultActions result = mockMvc.perform(post("/relation")
@@ -135,7 +152,8 @@ public class ConnectionControllerTest {
          result
                  .andExpect(redirectedUrl("/relation"))
                  .andExpect(status().isFound())
-                 .andExpect(flash().attribute("message", "User already connected"));
+                 .andExpect(flash().attribute("message_type", "warning"))
+                 .andExpect(flash().attributeExists("message"));
 
         verify(userService, times(2)).getUserByEmail(anyString());
         verify(userService, times(1)).addConnectionToUser(any(), any());

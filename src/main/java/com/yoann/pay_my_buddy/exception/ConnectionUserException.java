@@ -4,4 +4,8 @@ public class ConnectionUserException extends Exception {
     public ConnectionUserException(String message) {
         super(message);
     }
+
+    public ConnectionUserException() {
+        super("Connection user exception");
+    }
 }
