@@ -19,6 +19,7 @@ import org.springframework.web.servlet.View;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -94,7 +95,8 @@ public class TransactionControllerTest {
         // Assert
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("transaction"));
+                .andExpect(view().name("transaction"))
+                .andExpect(content().string(containsString("jtest@email.com")));
     }
 
     @Test
