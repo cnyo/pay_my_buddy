@@ -37,17 +37,6 @@ public class UserServiceImpl implements UserService {
     private final Logger log = LogManager.getLogger(UserServiceImpl.class);
 
     /**
-     * Retrieves all users.
-     *
-     * @return an {@link Iterable} of {@link User} entities.
-     */
-    @Override
-    public Iterable<User> getUsers() {
-        log.debug("Getting all users");
-        return userRepository.findAll();
-    }
-
-    /**
      * Adds a new user to the database.
      *
      * @param user the {@link User} to add.

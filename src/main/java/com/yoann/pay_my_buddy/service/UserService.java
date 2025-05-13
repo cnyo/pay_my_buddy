@@ -14,13 +14,6 @@ import java.util.List;
 public interface UserService {
 
     /**
-     * Retrieves all users.
-     *
-     * @return an {@link Iterable} of {@link User} entities.
-     */
-    Iterable<User> getUsers();
-
-    /**
      * Adds a new user to the database.
      *
      * @param user the {@link User} to add.

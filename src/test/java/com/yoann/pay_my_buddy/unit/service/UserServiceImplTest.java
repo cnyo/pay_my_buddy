@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +49,21 @@ public class UserServiceImplTest {
     @BeforeAll
     public static void setUp() {
         userService = new UserServiceImpl();
+    }
+
+    @Test
+    public void whenAddUser_thenReturnUser() throws UserNotFoundException {
+        User user = new User();
+        user.setUsername("username");
+        user.setEmail("email@email.com");
+        user.setPassword("password");
+
+        when(userRepository.save(any())).thenReturn(user);
+
+        User result = userService.addUser(any());
+
+        assertThat(result).isEqualTo(user);
+        assertThat(result.getUsername()).isEqualTo("username");
     }
 
     @Test
@@ -344,5 +360,26 @@ public class UserServiceImplTest {
 
         // Assert
         assertThatThrownBy(() -> userService.updateUser(user)).isInstanceOf(UserNotFoundException.class);
+    }
+
+    @Test
+    public void whenGetConnectedUsers_thenReturnUsers() throws UserNotFoundException {
+        // Arrange
+        User user = new User();
+        user.setUsername("username");
+        user.setEmail("email@email.com");
+        user.setPassword("password");
+
+        List<User> users = List.of(user);
+
+        when(userRepository.getConnectedUsersFromUser(any())).thenReturn(users);
+
+        // Act
+        List<User> result = userService.getConnectedUsersFromUser(new User());
+
+        // Assert
+        assertThat(result).isNotNull();
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.getFirst().getUsername()).isEqualTo("username");
     }
 }
