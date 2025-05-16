@@ -23,7 +23,6 @@ import java.util.Optional;
  * Service implementation for managing users and their connections.
  */
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
@@ -43,6 +42,7 @@ public class UserServiceImpl implements UserService {
      * @return the saved {@link User}.
      */
     @Override
+    @Transactional
     public User addUser(User user) {
         log.debug("add user");
         return userRepository.save(user);
@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException if the user does not exist.
      */
     @Override
+    @Transactional
     public User updateUser(User user) throws IllegalArgumentException, UserNotFoundException {
         log.debug("Updating user");
 
@@ -121,6 +122,7 @@ public class UserServiceImpl implements UserService {
      * @throws ConnectionUserException if the connection is invalid or already exists.
      */
     @Override
+    @Transactional
     public User addConnectionToUser(User currentUser, User userToConnect) throws ConnectionUserException {
         validateUsers(currentUser, userToConnect);
         log.debug("Adding connection from user {} to user {}", currentUser.getId(), userToConnect.getId());
@@ -144,6 +146,7 @@ public class UserServiceImpl implements UserService {
      * @return list of connected {@link User} entities.
      */
     @Override
+    @Transactional
     public List<User> getConnectedUsersFromUser(User user) {
         return userRepository.getConnectedUsersFromUser(user.getId());
     }
@@ -198,6 +201,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException if no user with the given email exists.
      */
     @Override
+    @Transactional
     public User getUserByEmail(String email) throws UserNotFoundException {
         log.debug("Getting user by email");
         User user = userRepository.findByEmail(email).orElse(null);
@@ -248,6 +252,7 @@ public class UserServiceImpl implements UserService {
      * @throws NullPointerException if no user with the username exists.
      */
     @Override
+    @Transactional
     public User getUserByUsername(String username) throws IllegalArgumentException, NullPointerException {
         if (username == null) {
             throw new IllegalArgumentException(UserExceptionMessage.USERNAME_IS_EMPTY.getMessage());

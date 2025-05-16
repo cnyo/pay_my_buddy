@@ -65,5 +65,11 @@ public interface TransactionService {
      */
     Transaction attachSenderUser(Transaction transaction, User authUser);
 
-    List<Transaction> getAllTransactionsByUser(User user);
+    /**
+     * Retrieves all transactions associated with a specific user.
+     *
+     * @param user the {@link User} whose transactions are to be retrieved.
+     * @return a {@link List} of {@link Transaction} entities associated with the specified user.
+     */
+    List<Transaction> getAllTransactionsByUser(User user) throws NullPointerException;
 }

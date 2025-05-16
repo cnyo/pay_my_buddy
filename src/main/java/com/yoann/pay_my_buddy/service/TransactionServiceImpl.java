@@ -27,7 +27,6 @@ import java.util.Objects;
  * Service implementation for managing user transactions within the application.
  * Provides functionality to retrieve, create, and map transactions, while validating business rules.
  */
-@Transactional
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger log = LogManager.getLogger(TransactionServiceImpl.class);
@@ -47,6 +46,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return an {@link Iterable} of all {@link Transaction} entities.
      */
     @Override
+    @Transactional
     public Iterable<Transaction> getTransactions() {
         log.debug("Call getTransactions");
         return transactionRepository.findAll();
@@ -61,6 +61,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @throws IllegalArgumentException if arguments are not valid.
      */
     @Override
+    @Transactional
     public Transaction addTransaction(Transaction transaction) throws UserTransactionException, IllegalArgumentException {
         if (transaction == null) {
             log.error("Transaction is null");
@@ -158,6 +159,8 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
+    @Override
+    @Transactional
     public List<Transaction> getAllTransactionsByUser(User user) throws NullPointerException {
         log.debug("Call getAllTransactionsByUser");
 
